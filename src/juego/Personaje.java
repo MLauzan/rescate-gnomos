@@ -3,16 +3,16 @@ package juego;
 import java.awt.Image;
 
 public class Personaje {
-	private int x;
-	private int y;
-	private int alto;
-	private int ancho;
-	private int velocidad;
-	private int vida;
-	private int daño;
+	private double x;
+	private double y;
+	private double alto;
+	private double ancho;
+	private double velocidad;
+	private double vida;
+	private double daño;
 	private Image imagen;
 
-	public Personaje(int x, int y, int alto, int ancho, int velocidad, int vida, int daño, Image imagen) {
+	public Personaje(double x, double y, double alto, double ancho, double velocidad, double vida, double daño, Image imagen) {
 		this.setX(x);
 		this.setY(y);
 		this.setAlto(alto);
@@ -23,51 +23,51 @@ public class Personaje {
 		this.setImagen(imagen);
 	}
 
-	public int getX() {
+	public double getX() {
 		return x;
 	}
 
-	public void setX(int x) {
+	public void setX(double x) {
 		this.x = x;
 	}
 
-	public int getY() {
+	public double getY() {
 		return y;
 	}
 
-	public void setY(int y) {
+	public void setY(double y) {
 		this.y = y;
 	}
 
-	public int getAlto() {
+	public double getAlto() {
 		return alto;
 	}
 
-	public void setAlto(int alto) {
+	public void setAlto(double alto) {
 		this.alto = alto;
 	}
 
-	public int getAncho() {
+	public double getAncho() {
 		return ancho;
 	}
 
-	public void setAncho(int ancho) {
+	public void setAncho(double ancho) {
 		this.ancho = ancho;
 	}
 
-	public int getVelocidad() {
+	public double getVelocidad() {
 		return velocidad;
 	}
 
-	public void setVelocidad(int velocidad) {
+	public void setVelocidad(double velocidad) {
 		this.velocidad = velocidad;
 	}
 
-	public int getVida() {
+	public double getVida() {
 		return vida;
 	}
 
-	public void setVida(int vida) {
+	public void setVida(double vida) {
 		this.vida = vida;
 	}
 
@@ -79,11 +79,11 @@ public class Personaje {
 		this.imagen = imagen;
 	}
 
-	public int getDaño() {
+	public double getDaño() {
 		return daño;
 	}
 
-	public void setDaño(int daño) {
+	public void setDaño(double daño) {
 		this.daño = daño;
 	}
 }
