@@ -1,15 +1,17 @@
 package juego;
 
 import java.awt.Image;
+import entorno.Entorno;
+import entorno.Herramientas;
 
 public class Casa {
-	private int x;
-	private int y;
-	private int alto;
-	private int ancho;
+	private double x;
+	private double y;
+	private double alto;
+	private double ancho;
 	private Image imagen;
 
-	public Casa(int x, int y, int alto, int ancho, Image Imagen) {
+	public Casa(double x, double y, double alto, double ancho, Image Imagen) {
 		this.setX(x);
 		this.setY(y);
 		this.setAlto(alto);
@@ -17,35 +19,35 @@ public class Casa {
 		this.setImagen(imagen);
 	}
 
-	public int getX() {
+	public double getX() {
 		return x;
 	}
 
-	public void setX(int x) {
+	public void setX(double x) {
 		this.x = x;
 	}
 
-	public int getY() {
+	public double getY() {
 		return y;
 	}
 
-	public void setY(int y) {
+	public void setY(double y) {
 		this.y = y;
 	}
 
-	public int getAlto() {
+	public double getAlto() {
 		return alto;
 	}
 
-	public void setAlto(int alto) {
+	public void setAlto(double alto) {
 		this.alto = alto;
 	}
 
-	public int getAncho() {
+	public double getAncho() {
 		return ancho;
 	}
 
-	public void setAncho(int ancho) {
+	public void setAncho(double ancho) {
 		this.ancho = ancho;
 	}
 
@@ -55,5 +57,10 @@ public class Casa {
 
 	public void setImagen(Image imagen) {
 		this.imagen = imagen;
+	}
+
+	public void dibujar(Entorno entorno) {
+		Image imagenCasa = Herramientas.cargarImagen("imagenes/casa.png");
+		entorno.dibujarImagen(imagenCasa, this.getX(), this.getY(), Math.toRadians(0), 0.06);
 	}
 }
