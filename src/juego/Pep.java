@@ -1,6 +1,8 @@
 package juego;
 
 import java.awt.Image;
+import java.util.ArrayList;
+
 import entorno.Entorno;
 import entorno.Herramientas;
 
@@ -93,5 +95,34 @@ public class Pep {
 
 	public void setDaño(double daño) {
 		this.daño = daño;
+	}
+	
+	public boolean pepSobreIsla(ArrayList<Isla> islas) {
+		for (Isla isla : islas) {
+			if (this.x >= isla.getX() - isla.getAncho() / 2 && this.x <= isla.getX() + isla.getAncho() / 2) {
+				if (this.y + this.alto / 2 >= isla.getY() - isla.getAlto() / 2
+						&& this.y + this.alto / 2 <= isla.getY() + isla.getAlto() / 2) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	public void moverDerecha() {
+		this.x = this.x + 3;
+	}
+
+	public void moverIzquierda() {
+		this.x = this.x - 3;
+	}
+
+	public void moverAbajo() {
+		this.y = this.y + 6;
+	}
+	public boolean dentroDelEntorno(Entorno entorno) {
+		return this.y <= entorno.alto() && this.x <= entorno.ancho() && this.y >= 0 && this.x >= 0;
+	}
+	public void moverArriba() {
+		this.y = this.y-5;
 	}
 }

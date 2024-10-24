@@ -58,6 +58,21 @@ public class Juego extends InterfaceJuego {
 			isla.dibujar(entorno);
 		}
 		this.pep.dibujar(entorno);
+		if((entorno.estaPresionada(entorno.TECLA_DERECHA) || entorno.estaPresionada('d')) && (this.pep.pepSobreIsla(islas) || this.pep.getX()+10 < this.entorno.ancho())) {
+			this.pep.moverDerecha();
+		}
+		if((entorno.estaPresionada(entorno.TECLA_IZQUIERDA) || entorno.estaPresionada('a')) && (this.pep.pepSobreIsla(islas) || this.pep.getX()-10 > 0)) {
+			this.pep.moverIzquierda();
+		}
+		if(this.pep.pepSobreIsla(islas) == false && this.pep.dentroDelEntorno(entorno)) {
+			this.pep.moverAbajo();
+		}
+		if((entorno.estaPresionada(entorno.TECLA_ARRIBA) || entorno.estaPresionada('w')) && this.pep.pepSobreIsla(islas)) {
+			for(int i=0;i<30;i++) {
+				this.pep.moverArriba();
+				//ajuste de tiempo
+			}
+		}
 		this.tortuga.dibujar(entorno);
 
 		tiempoGeneracion += 1.0 / 60;
