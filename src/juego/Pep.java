@@ -2,7 +2,6 @@ package juego;
 
 import java.awt.Image;
 import java.util.ArrayList;
-
 import entorno.Entorno;
 import entorno.Herramientas;
 
@@ -15,6 +14,10 @@ public class Pep {
 	private double vida;
 	private double daño;
 	private Image imagen;
+
+	private double velocidadSalto = 0;
+	private final double gravedad = 0.5;
+	private final double impulsoSalto = 16;
 
 	public Pep(double x, double y, double alto, double ancho, double velocidad, double vida, double daño,
 			Image imagen) {
@@ -31,6 +34,61 @@ public class Pep {
 	public void dibujar(Entorno entorno) {
 		Image imagenPep = Herramientas.cargarImagen("imagenes/pep.png");
 		entorno.dibujarImagen(imagenPep, this.getX(), this.getY(), Math.toRadians(0), 0.05);
+	}
+
+	public void iniciarSalto() {
+		this.velocidadSalto = -impulsoSalto;
+	}
+
+	public void actualizarSalto(ArrayList<Isla> islas) {
+		if (pepChocaCabeza(islas)) {
+			this.velocidadSalto = gravedad;
+		} else if (!pepSobreIsla(islas) || this.velocidadSalto < 0) {
+			this.y += velocidadSalto;
+			this.velocidadSalto += gravedad;
+		} else {
+			this.velocidadSalto = 0;
+		}
+	}
+
+	public boolean pepSobreIsla(ArrayList<Isla> islas) {
+		for (Isla isla : islas) {
+			if (this.x >= isla.getX() - isla.getAncho() / 2 && this.x <= isla.getX() + isla.getAncho() / 2) {
+				if (this.y + this.alto / 2 >= isla.getY() - isla.getAlto() / 2
+						&& this.y + this.alto / 2 <= isla.getY() + isla.getAlto() / 2) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public boolean pepChocaCabeza(ArrayList<Isla> islas) {
+		for (Isla isla : islas) {
+			if (this.x >= isla.getX() - isla.getAncho() / 2 && this.x <= isla.getX() + isla.getAncho() / 2) {
+				if (this.y - this.alto / 2 <= isla.getY() + isla.getAlto() / 2
+						&& this.y - this.alto / 2 >= isla.getY() - isla.getAlto() / 2) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public void moverDerecha() {
+		this.x = this.x + 3;
+	}
+
+	public void moverIzquierda() {
+		this.x = this.x - 3;
+	}
+
+	public void moverAbajo() {
+		this.y = this.y + 6;
+	}
+
+	public boolean dentroDelEntorno(Entorno entorno) {
+		return this.y <= entorno.alto() && this.x <= entorno.ancho() && this.y >= 0 && this.x >= 0;
 	}
 
 	public double getX() {
@@ -95,34 +153,5 @@ public class Pep {
 
 	public void setDaño(double daño) {
 		this.daño = daño;
-	}
-	
-	public boolean pepSobreIsla(ArrayList<Isla> islas) {
-		for (Isla isla : islas) {
-			if (this.x >= isla.getX() - isla.getAncho() / 2 && this.x <= isla.getX() + isla.getAncho() / 2) {
-				if (this.y + this.alto / 2 >= isla.getY() - isla.getAlto() / 2
-						&& this.y + this.alto / 2 <= isla.getY() + isla.getAlto() / 2) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	public void moverDerecha() {
-		this.x = this.x + 3;
-	}
-
-	public void moverIzquierda() {
-		this.x = this.x - 3;
-	}
-
-	public void moverAbajo() {
-		this.y = this.y + 6;
-	}
-	public boolean dentroDelEntorno(Entorno entorno) {
-		return this.y <= entorno.alto() && this.x <= entorno.ancho() && this.y >= 0 && this.x >= 0;
-	}
-	public void moverArriba() {
-		this.y = this.y-5;
 	}
 }
