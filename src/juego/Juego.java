@@ -81,12 +81,12 @@ public class Juego extends InterfaceJuego {
 			this.pep.moverAbajo();
 		}
 
-		if ((entorno.estaPresionada(entorno.TECLA_ARRIBA) || entorno.estaPresionada('w'))
+		if ((entorno.sePresiono(entorno.TECLA_ARRIBA) || entorno.sePresiono('w'))
 				&& this.pep.pepSobreIsla(islas)) {
 			this.pep.iniciarSalto();
 		}
 		
-		if(entorno.estaPresionada('c') || entorno.sePresionoBoton(entorno.BOTON_IZQUIERDO)) {
+		if(entorno.sePresiono('c') || entorno.sePresionoBoton(entorno.BOTON_IZQUIERDO)) {
 			disparos.add(new BolaFuego(this.pep.getX(), this.pep.getY()+this.pep.getAlto()/2, 50, 30, null, direcBola));
 		}
 		for (int i = 0; i < disparos.size(); i++) {
