@@ -87,7 +87,7 @@ public class Juego extends InterfaceJuego {
 		}
 		
 		if(entorno.sePresiono('c') || entorno.sePresionoBoton(entorno.BOTON_IZQUIERDO)) {
-			disparos.add(new BolaFuego(this.pep.getX(), this.pep.getY()+this.pep.getAlto()/2, 50, 30, null, direcBola));
+			disparos.add(new BolaFuego(this.pep.getX(), this.pep.getY()+this.pep.getAlto()/4, 50, 30, null, direcBola));
 		}
 		for (int i = 0; i < disparos.size(); i++) {
 			BolaFuego bola = disparos.get(i);
