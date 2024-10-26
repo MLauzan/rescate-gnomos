@@ -20,8 +20,8 @@ public class Isla {
 	}
 
 	public void dibujar(Entorno entorno) {
-		Image imagenIsla = Herramientas.cargarImagen("imagenes/isla.PNG");
-		entorno.dibujarImagen(imagenIsla, this.getX(), this.getY(), Math.toRadians(0), 0.08);
+		Image imagenIsla = Herramientas.cargarImagen("imagenes/isla.png");
+		entorno.dibujarImagen(imagenIsla, this.getX(), this.getY(), Math.toRadians(0), 0.2);
 	}
 
 	public double getX() {
