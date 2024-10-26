@@ -15,6 +15,8 @@ public class Juego extends InterfaceJuego {
 	private Pep pep;
 	private Casa casa;
 	private ArrayList<Isla> islas;
+	private boolean direcBola;
+	private ArrayList<BolaFuego> disparos;
 
 	public void dibujarFondo() {
 		Image imagenFondo = Herramientas.cargarImagen("imagenes/fondo.jpg");
@@ -45,6 +47,7 @@ public class Juego extends InterfaceJuego {
 
 		this.pep = new Pep(50, 460, 50, 30, 0, 0, 0, null);
 		this.tortuga = new Tortuga(pep.getX() + 100, pep.getY(), pep.getAlto(), pep.getAncho() + 20, 0, 0, 0, null);
+		this.disparos = new ArrayList<>();
 
 		this.entorno.iniciar();
 		this.tiempoGeneracion = 0;
@@ -66,10 +69,12 @@ public class Juego extends InterfaceJuego {
 		if ((entorno.estaPresionada(entorno.TECLA_DERECHA) || entorno.estaPresionada('d'))
 				&& (this.pep.pepSobreIsla(islas) || this.pep.getX() + 10 < this.entorno.ancho())) {
 			this.pep.moverDerecha();
+			direcBola=true;
 		}
 		if ((entorno.estaPresionada(entorno.TECLA_IZQUIERDA) || entorno.estaPresionada('a'))
-				&& (this.pep.pepSobreIsla(islas) || this.pep.getX() - 10 > 0)) {
+				&& (this.pep.pepSobreIsla(islas) || this.pep.getX() -10 > 0)) {
 			this.pep.moverIzquierda();
+			direcBola=false;
 		}
 
 		if (this.pep.pepSobreIsla(islas) == false && this.pep.dentroDelEntorno(entorno)) {
@@ -79,6 +84,24 @@ public class Juego extends InterfaceJuego {
 		if ((entorno.estaPresionada(entorno.TECLA_ARRIBA) || entorno.estaPresionada('w'))
 				&& this.pep.pepSobreIsla(islas)) {
 			this.pep.iniciarSalto();
+		}
+		
+		if(entorno.estaPresionada('c') || entorno.sePresionoBoton(entorno.BOTON_IZQUIERDO)) {
+			disparos.add(new BolaFuego(this.pep.getX(), this.pep.getY()+this.pep.getAlto()/2, 50, 30, null, direcBola));
+		}
+		for (int i = 0; i < disparos.size(); i++) {
+			BolaFuego bola = disparos.get(i);
+			if(bola.isDirec()) {
+				bola.moverDerecha();
+			}
+			if(!bola.isDirec()) {
+				bola.moverIzquierda();
+			}
+			bola.dibujar(entorno);
+			if(!bola.dentroDelEntorno(entorno)) {
+				disparos.remove(i);
+				i--;
+			}
 		}
 
 		this.pep.actualizarSalto(islas);
