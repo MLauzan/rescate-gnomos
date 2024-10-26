@@ -67,12 +67,12 @@ public class Juego extends InterfaceJuego {
 		this.pep.dibujar(entorno);
 
 		if ((entorno.estaPresionada(entorno.TECLA_DERECHA) || entorno.estaPresionada('d'))
-				&& (this.pep.pepSobreIsla(islas) || this.pep.getX() + 10 < this.entorno.ancho())) {
+				&&  this.pep.getX() + 10 < this.entorno.ancho()) {
 			this.pep.moverDerecha();
 			direcBola=true;
 		}
 		if ((entorno.estaPresionada(entorno.TECLA_IZQUIERDA) || entorno.estaPresionada('a'))
-				&& (this.pep.pepSobreIsla(islas) || this.pep.getX() -10 > 0)) {
+				&& this.pep.getX() -10 > 0) {
 			this.pep.moverIzquierda();
 			direcBola=false;
 		}
