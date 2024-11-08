@@ -1,0 +1,5 @@
+INDEX VERSION 1.134+C:\Users\nicko\rescate-gnomos\.metadata\.plugins\org.eclipse.jdt.core
+1865797976.index
+2571384950.index
+1949549558.index
+558249693.index

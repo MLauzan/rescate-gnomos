@@ -2,6 +2,8 @@ package juego;
 
 import java.awt.Image;
 import java.util.ArrayList;
+import java.util.Random;
+
 import entorno.Entorno;
 import entorno.Herramientas;
 import entorno.InterfaceJuego;
@@ -11,7 +13,8 @@ public class Juego extends InterfaceJuego {
 	private ArrayList<Gnomo> gnomos;
 	private double tiempoGeneracion;
 	private int intervaloGeneracion;
-	private Tortuga tortuga;
+	private ArrayList<Tortuga> tortugas;
+	private Random rand = new Random();
 	private Pep pep;
 	private Casa casa;
 	private ArrayList<Isla> islas;
@@ -26,6 +29,8 @@ public class Juego extends InterfaceJuego {
 	Juego() {
 		this.entorno = new Entorno(this, "Proyecto para TP", 800, 600);
 		this.gnomos = new ArrayList<>();
+		//Inicio de Tortugas
+		this.tortugas = new ArrayList<Tortuga>();
 		this.casa = new Casa(400, 60, 50, 50, null);
 		this.islas = new ArrayList<>();
 
@@ -46,7 +51,7 @@ public class Juego extends InterfaceJuego {
 		islas.add(new Isla(750, 500, 30, 110, null));
 
 		this.pep = new Pep(50, 460, 50, 30, 0, 0, 0, null);
-		this.tortuga = new Tortuga(pep.getX() + 100, pep.getY(), pep.getAlto(), pep.getAncho() + 20, 0, 0, 0, null);
+		//this.tortuga = new Tortuga(pep.getX() + 100, pep.getY(), pep.getAlto(), pep.getAncho() + 20, 0, 0, 0, null);
 		this.disparos = new ArrayList<>();
 
 		this.entorno.iniciar();
@@ -63,6 +68,13 @@ public class Juego extends InterfaceJuego {
 		for (Isla isla : this.islas) {
 			isla.dibujar(entorno);
 		}
+		
+		
+	
+
+
+		
+		
 
 		this.pep.dibujar(entorno);
 
@@ -106,13 +118,14 @@ public class Juego extends InterfaceJuego {
 
 		this.pep.actualizarSalto(islas);
 
-		this.tortuga.dibujar(entorno);
+		//this.tortuga.dibujar(entorno);
 
 		tiempoGeneracion += 1.0 / 60;
 
 		if (tiempoGeneracion >= intervaloGeneracion) {
 			if (gnomos.size() < 4) {
 				gnomos.add(new Gnomo(400, 60, 55, 95, 0, 0, 0, null, false));
+				
 			}
 			tiempoGeneracion = 0;
 		}
@@ -147,6 +160,72 @@ public class Juego extends InterfaceJuego {
 				}
 			}
 		}
+		
+
+		tiempoGeneracion += 1 / 60.0;
+		
+
+		if (tiempoGeneracion >=  intervaloGeneracion) {
+			if (tortugas.size() < 4) {
+				int x = rand.nextInt(entorno.getWidth());
+			
+				tortugas.add(new Tortuga (x, 0, 35, 50, 0, 0, 0, null, false, 2, 2));
+			}
+				
+			tiempoGeneracion = 0;
+		}
+				
+		for (int i = 0; i  < tortugas.size(); i++) {
+			Tortuga tortuga = tortugas.get(i);
+			if(tortuga != null) {
+				tortuga.dibujar(entorno);
+				
+				if(tortuga.tortugaSobreIsla(islas)) {
+					if (tortuga.isMovimientiIzquierda()) {
+					
+						while(tortuga.tortugaSobreIsla(islas) == true) {
+							if (tortuga.isMovimientiIzquierda()) {
+								tortuga.moverDerecha();
+								tortuga.setAterrizado(true);
+							break;
+							}else {
+								tortuga.moverIzquierda();
+								tortuga.setAterrizado(true);
+							}
+							
+					
+							
+							
+							
+						}
+						//tortuga.moverEnIsla(islas);
+						
+					}else {
+					if(!tortuga.estaAterrizado()) {
+						tortuga.direccionTortuga();
+						tortuga.setAterrizado(true);
+					}
+					
+					if(!tortuga.isMovimientiIzquierda()) {
+					
+						tortuga.moverIzquierda();
+					}else {
+					
+						tortuga.moverDerecha();
+					}
+					}
+					
+				}else {
+					tortuga.moverAbajo();
+					tortuga.resetearAterrizado();
+					if(!tortuga.dentroDelEntorno(entorno)) {
+						tortugas.remove(i);
+						i--;
+					}
+				}
+			}
+		}
+		
 
 	}
 
