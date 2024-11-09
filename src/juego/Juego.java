@@ -76,7 +76,8 @@ public class Juego extends InterfaceJuego {
 		if(this.pep!=null) {
 			
 			this.pep.dibujar(entorno);
-	
+	        
+			//MOVILIDAD PEP
 			if ((entorno.estaPresionada(entorno.TECLA_DERECHA) || entorno.estaPresionada('d'))
 					&&  this.pep.getX() + 10 < this.entorno.ancho()) {
 				this.pep.moverDerecha();
@@ -97,6 +98,14 @@ public class Juego extends InterfaceJuego {
 				this.pep.iniciarSalto();
 			}
 			
+			this.pep.actualizarSalto(islas);
+			
+			//muerte por limite
+			if(!this.pep.dentroDelEntorno(entorno)) {
+				this.pep=null;
+			}
+			
+			//DISPARO PEP
 			if(entorno.sePresiono('c') || entorno.sePresionoBoton(entorno.BOTON_IZQUIERDO)) {
 				disparos.add(new BolaFuego(this.pep.getX(), this.pep.getY()+this.pep.getAlto()/4, 50, 30, null, direcBola));
 			}
@@ -104,6 +113,7 @@ public class Juego extends InterfaceJuego {
 			for (int i = 0; i < disparos.size(); i++) {
 				BolaFuego bola = disparos.get(i);
 				if(bola!=null) {
+					//MOVILIDAD BOLA
 					if(bola.isDirec()) {
 						bola.moverDerecha();
 					}
@@ -119,11 +129,6 @@ public class Juego extends InterfaceJuego {
 				}
 			}
 	
-			this.pep.actualizarSalto(islas);
-			//muerte por limite
-			if(!this.pep.dentroDelEntorno(entorno)) {
-				this.pep=null;
-			}
 		}
 
 
@@ -147,7 +152,8 @@ public class Juego extends InterfaceJuego {
 			Gnomo gnomo = gnomos.get(i);
 			if (gnomo != null) {
 				gnomo.dibujar(entorno);
-
+                
+				//MOVILIDAD GNOMO
 				if (gnomo.gnomoSobreIsla(islas)) {
 					if (!gnomo.estaAterrizado()) {
 						gnomo.elegirDireccion();
@@ -191,11 +197,8 @@ public class Juego extends InterfaceJuego {
 			
 			if(tortuga != null) {
 				tortuga.dibujar(entorno);
-				//colision
-				
-//				if(this.pep!=null && hayColision(this.pep.getX(), this.pep.getY(), this.pep.getAncho(), this.pep.getAlto(), tortuga.getX(), tortuga.getY(), tortuga.getAncho(), tortuga.getAlto())) {
-//					this.pep=null;
-//				}
+                
+				//MOVILIDAD TORTUGA
 				if(!tortuga.estaAterrizado()) {
 					tortuga.moverAbajo();
 					tortuga.resetearAterrizado();
