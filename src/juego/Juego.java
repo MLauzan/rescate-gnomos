@@ -54,7 +54,7 @@ public class Juego extends InterfaceJuego {
 		islas.add(new Isla(575, 500, 30, 110, null));
 		islas.add(new Isla(750, 500, 30, 110, null));
 
-		this.pep = new Pep(50, 460, 50, 30, 0, 0, 0, null);
+		this.pep = new Pep(50, 460, 50, 30, 0, 3, 0, null);
 		this.disparos = new ArrayList<>();
 
 		this.entorno.iniciar();
@@ -102,7 +102,14 @@ public class Juego extends InterfaceJuego {
 			
 			//muerte por limite
 			if(!this.pep.dentroDelEntorno(entorno)) {
-				this.pep=null;
+				if(this.pep.getVida()>0) {
+					this.pep.setVida(this.pep.getVida()-1);
+					this.pep.setX(400);
+					this.pep.setY(1);
+				}
+				else{
+					this.pep=null;
+				}
 			}
 			
 			//DISPARO PEP
@@ -246,7 +253,14 @@ public class Juego extends InterfaceJuego {
 					//muerte pep
 					if(this.pep!=null && tortuga!=null && hayColision(this.pep.getX(), this.pep.getY(), this.pep.getAncho(), this.pep.getAlto(),
 							tortuga.getX(), tortuga.getY(), tortuga.getAncho(), tortuga.getAlto())) {
-						this.pep=null;
+						if(this.pep.getVida()>0) {
+							this.pep.setVida(this.pep.getVida()-1);
+							this.pep.setX(400);
+							this.pep.setY(1);
+						}
+						else{
+							this.pep=null;
+						}
 					}
 					//muerte gnomo
 			        if (gnomo!=null && tortuga!=null && hayColision(gnomo.getX(), gnomo.getY(), gnomo.getAncho(), gnomo.getAlto(),
