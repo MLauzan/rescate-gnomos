@@ -25,7 +25,7 @@ public class Tortuga {
 
 	
 	public Tortuga(double x, double y, double alto, double ancho, double velocidad, double vida, double daño,
-			Image imagen, boolean aterrizado, double velocidadvertical,double velocidadHorizontal) {
+			Image imagen, boolean aterrizado, boolean movimientoIzquierda, double velocidadvertical,double velocidadHorizontal) {
 		super();
 		this.x = x;
 		this.y = y;
@@ -35,8 +35,8 @@ public class Tortuga {
 		this.vida = vida;
 		this.daño = daño;
 		this.imagen = imagen;
-		this.aterrizado = false;
-		this.movimientoIzquierda = true;
+		this.aterrizado = aterrizado;
+		this.movimientoIzquierda = movimientoIzquierda;
 		this.velocidadVertical =  velocidadvertical;
 		this.velocidadHorizontal = velocidadHorizontal;
 		
@@ -53,6 +53,21 @@ public class Tortuga {
     
    
    
+
+
+	public boolean isMovimientoIzquierda() {
+		return movimientoIzquierda;
+	}
+
+
+	public void setMovimientoIzquierda(boolean movimientoIzquierda) {
+		this.movimientoIzquierda = movimientoIzquierda;
+	}
+
+
+	public boolean isAterrizado() {
+		return aterrizado;
+	}
 
 
 	public double getX() {
@@ -199,22 +214,7 @@ public class Tortuga {
 	}
 
 	
-	//Pocision Tortuga
-	
-	public void actualizarPosicion() {
-		if (movimientoIzquierda) {
-			x -= velocidad;
-		}else{
-			x+= velocidad;
-		}
-		if(x<0) {
-			x=0;
-			movimientoIzquierda = false;
-		}else if(x + ancho > getIsla().getAncho()){
-			x = getIsla().getAncho() - ancho;
-			movimientoIzquierda = true;
-		}
-	}
+
 
 	private Tortuga getIsla() {
 		// TODO Auto-generated method stub
@@ -222,44 +222,21 @@ public class Tortuga {
 	}
 
 
-	//CAER, rebotar
-	public void rebotar() {
-		this.velocidad = this.velocidad * (-1);
-	}
+
 	public void moverAbajo() {
 		this.y = this.y + 2;
 	}
 	
    
 	
-	//MOVIMIENTO OSCILATORIO
-	
-	public void moverEnIsla(ArrayList<Isla> islas) {
-		for (Isla isla : islas) {
-			
-			if (movimientoIzquierda) {
-				moverIzquierda();
-				if (x <= isla.getX() - getAncho()) {
-					direccionTortuga();
-					
-				}
-			}else {
-				moverDerecha();
-				if (x >= isla.getX()+ isla.getAncho() - getAncho()) {
-					direccionTortuga();
-				}
-			}
-		}
-    }
-	
 	
 	// DIRECCION
 	public void moverDerecha() {
-		this.x = this.x + 0.2;
+		this.x = this.x + 0.5;
 	}
 
 	public void moverIzquierda() {
-		this.x = this.x - 0.2;
+		this.x = this.x - 0.5;
 	}
 	
 	public boolean isMovimientiIzquierda() {
@@ -269,9 +246,7 @@ public class Tortuga {
 	
 	public void direccionTortuga() {
 		double numeroRandom = Math.random();
-		this.movimientoIzquierda = numeroRandom >= 0.2;
-		//
-		//this.movimientoIzquierda = !movimientoIzquierda;
+		this.movimientoIzquierda = numeroRandom >= 0.5;
 		
 	}
 	
@@ -289,10 +264,10 @@ public class Tortuga {
 	//Verifica si la tortuga esta sobre una isla
 	
 	public boolean tortugaSobreCasa(Casa casa) {
-		if(this.x >= casa.getX() - casa.getY() /2 && this.x <= casa.getX() +
-				casa.getAncho()/2) {
-			if (this.y + this.alto /2 >= casa.getY() - casa.getAlto() /2 && 
-					this.y + this.alto / 2 <= casa.getY() + casa.getAlto() / 2) { 
+		if(this.x >= casa.getX() - casa.getAncho() /2-30 && this.x <= casa.getX() +
+				casa.getAncho()/2+30) {
+			if (this.y + this.alto /2 >= casa.getY() - casa.getAlto() /2-40 && 
+					this.y + this.alto / 2 <= casa.getY() + casa.getAlto() / 2+40) { 
                 return true; 
 			}
 		
@@ -315,7 +290,16 @@ public class Tortuga {
 		return this.y <= entorno.alto() && this.x <= entorno.ancho();
 	}
 	
-
+	public boolean islaOcupada(ArrayList<Isla> islas, ArrayList<Tortuga> tortugas) {   // sin terminar
+		for (Isla isla : islas) {
+			for(Tortuga tortu : tortugas) {
+				if(tortu.tortugaSobreIsla(islas)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 
 	

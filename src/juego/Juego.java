@@ -166,10 +166,10 @@ public class Juego extends InterfaceJuego {
 		
 
 		if (tiempoGeneracion >=  intervaloGeneracion) {
-			if (tortugas.size() < 4) {
+			if (tortugas.size() < 8) {
 				int x = rand.nextInt(entorno.getWidth());
 			
-				tortugas.add(new Tortuga (x, 0, 35, 50, 0, 0, 0, null, false, 2, 2));
+				tortugas.add(new Tortuga (x, 0, 35, 50, 0, 0, 0, null,false , true, 2, 2));
 			}
 				
 			tiempoGeneracion = 0;
@@ -179,45 +179,28 @@ public class Juego extends InterfaceJuego {
 			Tortuga tortuga = tortugas.get(i);
 			if(tortuga != null) {
 				tortuga.dibujar(entorno);
-				
-				if(tortuga.tortugaSobreIsla(islas)) {
-					if (tortuga.isMovimientiIzquierda()) {
-					
-						while(tortuga.tortugaSobreIsla(islas) == true) {
-							if (tortuga.isMovimientiIzquierda()) {
-								tortuga.moverDerecha();
-								tortuga.setAterrizado(true);
-							break;
-							}else {
-								tortuga.moverIzquierda();
-								tortuga.setAterrizado(true);
-							}
-							
-					
-							
-							
-							
-						}
-						//tortuga.moverEnIsla(islas);
-						
-					}else {
-					if(!tortuga.estaAterrizado()) {
-						tortuga.direccionTortuga();
-						tortuga.setAterrizado(true);
-					}
-					
-					if(!tortuga.isMovimientiIzquierda()) {
-					
-						tortuga.moverIzquierda();
-					}else {
-					
-						tortuga.moverDerecha();
-					}
-					}
-					
-				}else {
+				if(!tortuga.estaAterrizado()) {
 					tortuga.moverAbajo();
 					tortuga.resetearAterrizado();
+				}
+				if(tortuga.tortugaSobreIsla(islas) && !tortuga.tortugaSobreCasa(casa) /*&& !tortuga.islaOcupada(islas, tortugas)*/) {
+					tortuga.setAterrizado(true);
+					if (tortuga.isMovimientiIzquierda()) {
+						tortuga.moverIzquierda();
+					}
+					else {
+						tortuga.moverDerecha();
+					}
+				if(!tortuga.tortugaSobreIsla(islas)) {   // si se va de limites de isla vuelve a entrar con direccion opuesta
+						tortuga.moverDerecha();
+						tortuga.setMovimientoIzquierda(false);
+						if(!tortuga.tortugaSobreIsla(islas)) {
+							tortuga.moverIzquierda();
+							tortuga.moverIzquierda();
+							tortuga.setMovimientoIzquierda(true);
+						}
+					}
+					
 					if(!tortuga.dentroDelEntorno(entorno)) {
 						tortugas.remove(i);
 						i--;
@@ -225,9 +208,8 @@ public class Juego extends InterfaceJuego {
 				}
 			}
 		}
-		
-
 	}
+
 
 	public static void main(String[] args) {
 		Juego juego = new Juego();
