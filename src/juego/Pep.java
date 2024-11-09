@@ -11,7 +11,7 @@ public class Pep {
 	private double alto;
 	private double ancho;
 	private double velocidad;
-	private double vida;
+	private int vida;
 	private double daño;
 	private Image imagen;
 
@@ -19,8 +19,7 @@ public class Pep {
 	private final double gravedad = 0.5;
 	private final double impulsoSalto = 16;
 
-	public Pep(double x, double y, double alto, double ancho, double velocidad, double vida, double daño,
-			Image imagen) {
+	public Pep(double x, double y, double alto, double ancho, double velocidad, int vida, double daño, Image imagen) {
 		this.setX(x);
 		this.setY(y);
 		this.setAlto(alto);
@@ -131,11 +130,11 @@ public class Pep {
 		this.velocidad = velocidad;
 	}
 
-	public double getVida() {
+	public int getVida() {
 		return vida;
 	}
 
-	public void setVida(double vida) {
+	public void setVida(int vida) {
 		this.vida = vida;
 	}
 
