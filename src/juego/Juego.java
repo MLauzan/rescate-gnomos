@@ -92,7 +92,6 @@ public class Juego extends InterfaceJuego {
 
 		
 		if (pep == null && roku == null) {
-//			try { Herramientas.play("sonidos/perder.wav"); } catch (Exception e) { e.printStackTrace();}
 			terminarJuego();
 		}
 
