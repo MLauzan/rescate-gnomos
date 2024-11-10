@@ -175,12 +175,13 @@ public class Juego extends InterfaceJuego {
 			// muerte por limite
 			if (!this.pep.dentroDelEntorno(entorno)) {
 				try { Herramientas.play("sonidos/muerte.wav"); } catch (Exception e) { e.printStackTrace();}
-				if (this.pep.getVida() > 1) {
+				if (this.pep.getVida() > 0) {
 					this.pep.setVida(this.pep.getVida() - 1);
 					this.pep.setX(400);
 					this.pep.setY(1);
 				} else {
 					this.pep = null;
+					try { Herramientas.play("sonidos/perder2.wav"); } catch (Exception e) { e.printStackTrace();}
 				}
 			}
 
@@ -253,12 +254,13 @@ public class Juego extends InterfaceJuego {
 				// muerte por limite
 				if (!this.roku.dentroDelEntorno(entorno)) {
 					try { Herramientas.play("sonidos/muerte.wav"); } catch (Exception e) { e.printStackTrace();}
-					if (this.roku.getVida() > 1) {
+					if (this.roku.getVida() > 0) {
 						this.roku.setVida(this.roku.getVida() - 1);
 						this.roku.setX(400);
 						this.roku.setY(1);
 					} else {
 						this.roku = null;
+						try { Herramientas.play("sonidos/perder.wav"); } catch (Exception e) { e.printStackTrace();}
 					}
 				}
 
@@ -442,6 +444,7 @@ public class Juego extends InterfaceJuego {
 						}
 					else{
 						this.pep=null;
+						try { Herramientas.play("sonidos/perder2.wav"); } catch (Exception e) { e.printStackTrace();}
 					}
 				}
 				
@@ -457,6 +460,7 @@ public class Juego extends InterfaceJuego {
 						}
 					else{
 						this.roku=null;
+						try { Herramientas.play("sonidos/perder.wav"); } catch (Exception e) { e.printStackTrace();}
 					}
 				}
 
