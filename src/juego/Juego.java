@@ -108,9 +108,11 @@ public class Juego extends InterfaceJuego {
 		entorno.escribirTexto("Tiempo de juego: " + tiempoJuego + " s", 10, 50);
 		if(this.pep!=null) {
 			entorno.escribirTexto("Vidas Pep: " + this.pep.getVida(), 10, 75);
+			entorno.escribirTexto("Escudos Pep: " + this.escudo.getVida(), 10, 100);
 		}
 		if(this.roku!=null) {
-			entorno.escribirTexto("Vidas Pep: " + this.roku.getVida(), 10, 75);
+			entorno.escribirTexto("Vidas Roku: " + this.roku.getVida(), 10, 125);
+			entorno.escribirTexto("Escudos Roku: " + this.escudo2.getVida(), 10, 150);
 		}
 
 		this.casa.dibujar(entorno);
@@ -214,7 +216,7 @@ public class Juego extends InterfaceJuego {
 					this.escudo2.dibujar(entorno);
 				}
 				if(entorno.seLevanto(entorno.TECLA_ABAJO) && this.escudo2.getVida()>0) {
-					this.escudo.setVida(this.escudo2.getVida()-1);
+					this.escudo2.setVida(this.escudo2.getVida()-1);
 					
 				}
 
@@ -322,41 +324,24 @@ public class Juego extends InterfaceJuego {
 			}
 		}
 		//NIVELES
-		if(gnomosSalvados>7) {
-			nivel=1;
+		if(gnomosSalvados%10==0 && gnomosSalvados != nivel*10) {
+			nivel++;
 		}
-		if(gnomosSalvados>14) {
-			nivel=2;
-		}
+
 
 		// TORTUGA
 
 		tiempoGeneracion += 1 / 60.0;
 
 		if (tiempoGeneracion >= intervaloGeneracion) {
+			if (tortugas.size() < nivel*2+2) {
+				int x = rand.nextInt(entorno.getWidth());
+
+				tortugas.add(new Tortuga(x, 0, 35, 50, 0, 0, 0, null, false, true, 2, 2));
+			}
 			
-			if(nivel==0) {
-				if (tortugas.size() < 2) {
-					int x = rand.nextInt(entorno.getWidth());
-
-					tortugas.add(new Tortuga(x, 0, 35, 50, 0, 0, 0, null, false, true, 2, 2));
-				}
-			}
-			if(nivel==1) {
-				if (tortugas.size() < 4) {
-					int x = rand.nextInt(entorno.getWidth());
-
-					tortugas.add(new Tortuga(x, 0, 35, 50, 0, 0, 0, null, false, true, 2, 2));
-				}
-			}
-			if(nivel==2) {
-				if (tortugas.size() < 6) {
-					int x = rand.nextInt(entorno.getWidth());
-
-					tortugas.add(new Tortuga(x, 0, 35, 50, 0, 0, 0, null, false, true, 2, 2));
-				}
 				
-			}
+
 
 
 			tiempoGeneracion = 0;
@@ -429,8 +414,8 @@ public class Juego extends InterfaceJuego {
 					gnomo = null;
 					gnomos.remove(j);
 					j--;
-					if(this.escudo.getVida()<3) {
-						this.escudo.setVida(this.escudo.getVida()+1);
+					if(this.escudo2.getVida()<3) {
+						this.escudo2.setVida(this.escudo2.getVida()+1);
 					}
 				}
 

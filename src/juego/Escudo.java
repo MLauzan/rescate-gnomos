@@ -10,11 +10,11 @@ public class Escudo {
 	private double y;
 	private double alto;
 	private double ancho;
-	private double vida;
+	private int vida;
 	private Image imagen;
 	
 	
-	public Escudo(double x, double y, double alto, double ancho, double vida, Image imagen) {
+	public Escudo(double x, double y, double alto, double ancho, int vida, Image imagen) {
 		super();
 		this.x = x;
 		this.y = y;
@@ -65,12 +65,12 @@ public class Escudo {
 	}
 
 
-	public double getVida() {
+	public int getVida() {
 		return vida;
 	}
 
 
-	public void setVida(double vida) {
+	public void setVida(int vida) {
 		this.vida = vida;
 	}
 
