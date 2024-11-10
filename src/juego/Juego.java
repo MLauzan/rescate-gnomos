@@ -25,6 +25,9 @@ public class Juego extends InterfaceJuego {
 	private int tiempoJuego;
 	private int tiempoTranscurrido;
 	private boolean juegoTerminado = false;
+	private Escudo escudo;
+	private int tortugasAsesinadas;
+	private int nivel;
 
 	public void dibujarFondo() {
 		Image imagenFondo = Herramientas.cargarImagen("imagenes/fondo.jpg");
@@ -65,6 +68,7 @@ public class Juego extends InterfaceJuego {
 		islas.add(new Isla(750, 500, 30, 110, null));
 
 		this.pep = new Pep(50, 460, 50, 30, 0, 3, 0, null);
+		this.escudo=new Escudo(this.pep.getX(), this.pep.getY(), this.pep.getAlto(), this.pep.getAncho(), 3, null);
 		this.disparos = new ArrayList<>();
 
 		this.entorno.iniciar();
@@ -90,6 +94,8 @@ public class Juego extends InterfaceJuego {
 
 		entorno.escribirTexto("Gnomos salvados: " + gnomosSalvados, 10, 25);
 		entorno.escribirTexto("Gnomos muertos: " + gnomosMuertos, 630, 25);
+		entorno.escribirTexto("Tortugas asesinadas: " + tortugasAsesinadas, 600, 50);
+		entorno.escribirTexto("Nivel: " + nivel, 650, 75);
 		entorno.escribirTexto("Tiempo de juego: " + tiempoJuego + " s", 10, 50);
 		entorno.escribirTexto("Vidas: " + this.pep.getVida(), 10, 75);
 
@@ -109,6 +115,19 @@ public class Juego extends InterfaceJuego {
 		if (this.pep != null) {
 
 			this.pep.dibujar(entorno);
+			//ESCUDO
+			this.escudo.setX(this.pep.getX());
+			this.escudo.setY(this.pep.getY());
+			this.escudo.setAlto(this.pep.getAlto());
+			this.escudo.setAncho(this.pep.getAncho());
+			if((entorno.estaPresionada(entorno.TECLA_ABAJO) || entorno.estaPresionada('s')) && this.escudo.getVida()>0){
+				this.escudo.dibujar(entorno);
+			}
+			if((entorno.seLevanto(entorno.TECLA_ABAJO) || entorno.seLevanto('s')) && this.escudo.getVida()>0) {
+				this.escudo.setVida(this.escudo.getVida()-1);
+				System.out.println(this.escudo.getVida());
+				
+			}
 
 			// MOVILIDAD PEP
 			if ((entorno.estaPresionada(entorno.TECLA_DERECHA) || entorno.estaPresionada('d'))
@@ -214,17 +233,43 @@ public class Juego extends InterfaceJuego {
 				}
 			}
 		}
+		//NIVELES
+		if(gnomosSalvados>7) {
+			nivel=1;
+		}
+		if(gnomosSalvados>14) {
+			nivel=2;
+		}
 
 		// TORTUGA
 
 		tiempoGeneracion += 1 / 60.0;
 
 		if (tiempoGeneracion >= intervaloGeneracion) {
-			if (tortugas.size() < 4) {
-				int x = rand.nextInt(entorno.getWidth());
+			
+			if(nivel==0) {
+				if (tortugas.size() < 2) {
+					int x = rand.nextInt(entorno.getWidth());
 
-				tortugas.add(new Tortuga(x, 0, 35, 50, 0, 0, 0, null, false, true, 2, 2));
+					tortugas.add(new Tortuga(x, 0, 35, 50, 0, 0, 0, null, false, true, 2, 2));
+				}
 			}
+			if(nivel==1) {
+				if (tortugas.size() < 4) {
+					int x = rand.nextInt(entorno.getWidth());
+
+					tortugas.add(new Tortuga(x, 0, 35, 50, 0, 0, 0, null, false, true, 2, 2));
+				}
+			}
+			if(nivel==2) {
+				if (tortugas.size() < 6) {
+					int x = rand.nextInt(entorno.getWidth());
+
+					tortugas.add(new Tortuga(x, 0, 35, 50, 0, 0, 0, null, false, true, 2, 2));
+				}
+				
+			}
+
 
 			tiempoGeneracion = 0;
 		}
@@ -283,19 +328,23 @@ public class Juego extends InterfaceJuego {
 					gnomo = null;
 					gnomos.remove(j);
 					j--;
+					if(this.escudo.getVida()<3) {
+						this.escudo.setVida(this.escudo.getVida()+1);
+					}
 				}
 
 				// muerte pep
-				if (this.pep != null && tortuga != null
-						&& hayColision(this.pep.getX(), this.pep.getY(), this.pep.getAncho(), this.pep.getAlto(),
-								tortuga.getX(), tortuga.getY(), tortuga.getAncho(), tortuga.getAlto())) {
-					if (this.pep.getVida() > 1) {
-						this.pep.setVida(this.pep.getVida() - 1);
-						this.pep.setX(400);
-						this.pep.setY(1);
-					} else {
-						this.pep = null;
-					}
+				if(this.pep!=null && tortuga!=null && !((entorno.estaPresionada('s') || entorno.estaPresionada(entorno.TECLA_ABAJO)) && this.escudo.getVida()>0) 
+						&&  hayColision(this.pep.getX(), this.pep.getY(), this.pep.getAncho(), this.pep.getAlto(),
+						tortuga.getX(), tortuga.getY(), tortuga.getAncho(), tortuga.getAlto())) {
+						if(this.pep.getVida()>0) {
+							this.pep.setVida(this.pep.getVida()-1);
+							this.pep.setX(400);
+							this.pep.setY(1);
+							}
+						else{
+							this.pep=null;
+						}
 				}
 
 				// muerte gnomo
@@ -317,6 +366,7 @@ public class Juego extends InterfaceJuego {
 				// muerte tortuga
 				if (bola != null && tortuga != null && hayColision(bola.getX(), bola.getY(), bola.getAncho(),
 						bola.getAlto(), tortuga.getX(), tortuga.getY(), tortuga.getAncho(), tortuga.getAlto())) {
+					tortugasAsesinadas++;
 					tortuga = null;
 					tortugas.remove(i);
 					i--;
@@ -340,8 +390,11 @@ public class Juego extends InterfaceJuego {
 		entorno.escribirTexto("Tiempo jugado: " + tiempoJuego + " segundos", 300, 250);
 		entorno.escribirTexto("Gnomos salvados: " + gnomosSalvados, 300, 290);
 		entorno.escribirTexto("Gnomos muertos: " + gnomosMuertos, 300, 330);
+		entorno.escribirTexto("Tortugas asesinadas: " + tortugasAsesinadas, 300, 370);
+		entorno.escribirTexto("Nivel: " + nivel, 300, 410);
+		
 
-		entorno.escribirTexto("Presioná 'R' para reiniciar o 'Q' para salir", 200, 380);
+		entorno.escribirTexto("Presioná 'R' para reiniciar o 'Q' para salir", 200, 450);
 
 		if (entorno.sePresiono('r')) {
 			reiniciarJuego();
@@ -357,6 +410,8 @@ public class Juego extends InterfaceJuego {
 		disparos.clear();
 		gnomosSalvados = 0;
 		gnomosMuertos = 0;
+		tortugasAsesinadas = 0;
+		nivel = 0;
 		pep = new Pep(50, 460, 50, 30, 0, 3, 0, null);
 	}
 
