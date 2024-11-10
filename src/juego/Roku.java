@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import entorno.Entorno;
 import entorno.Herramientas;
 
-public class Pep {
+public class Roku {
 	private double x;
 	private double y;
 	private double alto;
@@ -19,7 +19,7 @@ public class Pep {
 	private final double gravedad = 0.5;
 	private final double impulsoSalto = 16;
 
-	public Pep(double x, double y, double alto, double ancho, double velocidad, int vida, double daño, Image imagen) {
+	public Roku(double x, double y, double alto, double ancho, double velocidad, int vida, double daño, Image imagen) {
 		this.setX(x);
 		this.setY(y);
 		this.setAlto(alto);
@@ -31,7 +31,7 @@ public class Pep {
 	}
 
 	public void dibujar(Entorno entorno) {
-		Image imagenPep = Herramientas.cargarImagen("imagenes/pep.png");
+		Image imagenPep = Herramientas.cargarImagen("imagenes/roku.png");
 		entorno.dibujarImagen(imagenPep, this.getX(), this.getY(), Math.toRadians(0), 0.05);
 	}
 
@@ -40,9 +40,9 @@ public class Pep {
 	}
 
 	public void actualizarSalto(ArrayList<Isla> islas) {
-		if (pepChocaCabeza(islas)) {
+		if (rokuChocaCabeza(islas)) {
 			this.velocidadSalto = gravedad;
-		} else if (!pepSobreIsla(islas) || this.velocidadSalto < 0) {
+		} else if (!rokuSobreIsla(islas) || this.velocidadSalto < 0) {
 			this.y += velocidadSalto;
 			this.velocidadSalto += gravedad;
 		} else {
@@ -50,7 +50,7 @@ public class Pep {
 		}
 	}
 
-	public boolean pepSobreIsla(ArrayList<Isla> islas) {
+	public boolean rokuSobreIsla(ArrayList<Isla> islas) {
 		for (Isla isla : islas) {
 			if (this.x >= isla.getX() - isla.getAncho() / 2 && this.x <= isla.getX() + isla.getAncho() / 2) {
 				if (this.y + this.alto / 2 >= isla.getY() - isla.getAlto() / 2
@@ -62,7 +62,7 @@ public class Pep {
 		return false;
 	}
 
-	public boolean pepChocaCabeza(ArrayList<Isla> islas) {
+	public boolean rokuChocaCabeza(ArrayList<Isla> islas) {
 		for (Isla isla : islas) {
 			if (this.x >= isla.getX() - isla.getAncho() / 2 && this.x <= isla.getX() + isla.getAncho() / 2) {
 				if (this.y - this.alto / 2 <= isla.getY() + isla.getAlto() / 2
