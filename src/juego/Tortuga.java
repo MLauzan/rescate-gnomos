@@ -287,7 +287,7 @@ public class Tortuga {
 	}
 
 	public boolean dentroDelEntorno(Entorno entorno) {
-		return this.y <= entorno.alto() && this.x <= entorno.ancho();
+		return this.y <= entorno.alto() && this.x <= entorno.ancho()+10;
 	}
 	
 	public boolean islaOcupada(ArrayList<Isla> islas, ArrayList<Tortuga> tortugas) {   // sin terminar
