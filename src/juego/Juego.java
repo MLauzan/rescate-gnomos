@@ -640,6 +640,7 @@ public class Juego extends InterfaceJuego {
 						bola2.getAlto(), tortuga.getX(), tortuga.getY(), tortuga.getAncho(), tortuga.getAlto())) {
 					rokuAsesinatos++;
 					tortugasAsesinadas++;
+					tiempoUltimaMuerte = tiempoJuego;
 					if(tortugasAsesinadas==1 || tortugasAsesinadas==5 || tortugasAsesinadas==10 || tortugasAsesinadas==20){
 						try {
 							Herramientas.play("sonidos/logroase.wav");
