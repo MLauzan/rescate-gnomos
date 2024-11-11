@@ -35,6 +35,11 @@ public class Juego extends InterfaceJuego {
 	private Escudo escudo2;
 	private boolean direcBola2;
 	private ArrayList<BolaFuego> disparos2;
+	private int finalizar;
+	private int pepSalvados;
+	private int rokuSalvados;
+	private int pepAsesinatos;
+	private int rokuAsesinatos;
 
 	public void dibujarFondo() {
 		Image imagenFondo = Herramientas.cargarImagen("imagenes/fondo.jpg");
@@ -81,6 +86,7 @@ public class Juego extends InterfaceJuego {
 				null);
 		this.disparos = new ArrayList<>();
 		this.disparos2 = new ArrayList<>();
+		finalizar=1;
 
 		this.entorno.iniciar();
 		this.tiempoGeneracion = 0;
@@ -96,7 +102,7 @@ public class Juego extends InterfaceJuego {
 			terminarJuego();
 		}
 
-		if (nivel == 3) {
+		if (nivel == finalizar) {
 			juegoGanado = true;
 			terminarJuego();
 		}
@@ -112,25 +118,25 @@ public class Juego extends InterfaceJuego {
 
 		entorno.cambiarFont("DialogInput", 26, Color.RED, 1);
 
-		if (tortugasAsesinadas >= 1 && (tiempoJuego - tiempoUltimaMuerte) < 3) {
+		if (tortugasAsesinadas == 1 && (tiempoJuego - tiempoUltimaMuerte) < 3) {
 			entorno.escribirTexto("¡TORTUGA A LA PARRILLA!", 240, 140);
-		} else if (tortugasAsesinadas >= 5 && (tiempoJuego - tiempoUltimaMuerte) < 3) {
+		} else if (tortugasAsesinadas == 5 && (tiempoJuego - tiempoUltimaMuerte) < 3) {
 			entorno.escribirTexto("¡SICARIO!", 320, 140);
-		} else if (tortugasAsesinadas >= 10 && (tiempoJuego - tiempoUltimaMuerte) < 3) {
+		} else if (tortugasAsesinadas == 10 && (tiempoJuego - tiempoUltimaMuerte) < 3) {
 			entorno.escribirTexto("¡EL TERROR DE LAS TORTUGAS!", 205, 140);
-		} else if (tortugasAsesinadas >= 20 && (tiempoJuego - tiempoUltimaMuerte) < 3) {
+		} else if (tortugasAsesinadas == 20 && (tiempoJuego - tiempoUltimaMuerte) < 3) {
 			entorno.escribirTexto("¡FURIA DESATADA!", 265, 140);
 		}
 
 		entorno.cambiarFont("DialogInput", 26, Color.CYAN, 1);
 
-		if (gnomosSalvados >= 1 && (tiempoJuego - tiempoUltimoSalvado) < 3) {
+		if (gnomosSalvados == 1 && (tiempoJuego - tiempoUltimoSalvado) < 3) {
 			entorno.escribirTexto("¡GNOMO A SALVO!", 520, 170);
-		} else if (gnomosSalvados >= 5 && (tiempoJuego - tiempoUltimoSalvado) < 3) {
+		} else if (gnomosSalvados == 5 && (tiempoJuego - tiempoUltimoSalvado) < 3) {
 			entorno.escribirTexto("¡HÉROE DE GNOMOS!", 500, 170);
-		} else if (gnomosSalvados >= 10 && (tiempoJuego - tiempoUltimoSalvado) < 3) {
+		} else if (gnomosSalvados == 10 && (tiempoJuego - tiempoUltimoSalvado) < 3) {
 			entorno.escribirTexto("¡NIÑERA PROFESIONAL!", 460, 170);
-		} else if (gnomosSalvados >= 20 && (tiempoJuego - tiempoUltimoSalvado) < 3) {
+		} else if (gnomosSalvados == 20 && (tiempoJuego - tiempoUltimoSalvado) < 3) {
 			entorno.escribirTexto("¡EL SALVADOR!", 540, 170);
 		}
 
@@ -165,10 +171,12 @@ public class Juego extends InterfaceJuego {
 		// NIVELES
 		if (gnomosSalvados % 10 == 0 && gnomosSalvados != nivel * 10) {
 			nivel++;
-			try {
-				Herramientas.play("sonidos/nivel2.wav");
-			} catch (Exception e) {
-				e.printStackTrace();
+			if(nivel != finalizar) {
+				try {
+					Herramientas.play("sonidos/nivel2.wav");
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 
@@ -463,11 +471,28 @@ public class Juego extends InterfaceJuego {
 						&& hayColision(this.pep.getX(), this.pep.getY(), this.pep.getAncho(), this.pep.getAlto(),
 								gnomo.getX(), gnomo.getY(), gnomo.getAncho(), gnomo.getAlto())) {
 					tiempoUltimoSalvado = tiempoJuego;
+					pepSalvados++;
 					gnomosSalvados++;
-					try {
-						Herramientas.play("sonidos/salvado.wav");
-					} catch (Exception e) {
-						e.printStackTrace();
+					if(gnomosSalvados==finalizar*10){
+						try {
+							Herramientas.play("sonidos/ganar.wav");
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					if(gnomosSalvados==1 || gnomosSalvados==5 || gnomosSalvados==10 || gnomosSalvados==20){
+						try {
+							Herramientas.play("sonidos/logrosalva.wav");
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					else {
+						try {
+							Herramientas.play("sonidos/salvado.wav");
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 					gnomo = null;
 					gnomos.remove(j);
@@ -482,11 +507,28 @@ public class Juego extends InterfaceJuego {
 						&& hayColision(this.roku.getX(), this.roku.getY(), this.roku.getAncho(), this.roku.getAlto(),
 								gnomo.getX(), gnomo.getY(), gnomo.getAncho(), gnomo.getAlto())) {
 					tiempoUltimoSalvado = tiempoJuego;
+					rokuSalvados++;
 					gnomosSalvados++;
-					try {
-						Herramientas.play("sonidos/salvado.wav");
-					} catch (Exception e) {
-						e.printStackTrace();
+					if(gnomosSalvados==finalizar*10){
+						try {
+							Herramientas.play("sonidos/ganar.wav");
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					if(gnomosSalvados==1 || gnomosSalvados==5 || gnomosSalvados==10 || gnomosSalvados==20){
+						try {
+							Herramientas.play("sonidos/logrosalva.wav");
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					else {
+						try {
+							Herramientas.play("sonidos/salvado.wav");
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 					gnomo = null;
 					gnomos.remove(j);
@@ -566,13 +608,23 @@ public class Juego extends InterfaceJuego {
 				// muerte tortuga
 				if (bola != null && tortuga != null && hayColision(bola.getX(), bola.getY(), bola.getAncho(),
 						bola.getAlto(), tortuga.getX(), tortuga.getY(), tortuga.getAncho(), tortuga.getAlto())) {
-					try {
-						Herramientas.play("sonidos/asesinato2.wav");
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+					pepAsesinatos++;
 					tortugasAsesinadas++;
 					tiempoUltimaMuerte = tiempoJuego;
+					if(tortugasAsesinadas==1 || tortugasAsesinadas==5 || tortugasAsesinadas==10 || tortugasAsesinadas==20){
+						try {
+							Herramientas.play("sonidos/logroase.wav");
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					else {
+						try {
+							Herramientas.play("sonidos/asesinato2.wav");
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
 					tortuga = null;
 					tortugas.remove(i);
 					i--;
@@ -586,12 +638,22 @@ public class Juego extends InterfaceJuego {
 				// muerte tortuga
 				if (bola2 != null && tortuga != null && hayColision(bola2.getX(), bola2.getY(), bola2.getAncho(),
 						bola2.getAlto(), tortuga.getX(), tortuga.getY(), tortuga.getAncho(), tortuga.getAlto())) {
-					try {
-						Herramientas.play("sonidos/asesinato2.wav");
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+					rokuAsesinatos++;
 					tortugasAsesinadas++;
+					if(tortugasAsesinadas==1 || tortugasAsesinadas==5 || tortugasAsesinadas==10 || tortugasAsesinadas==20){
+						try {
+							Herramientas.play("sonidos/logroase.wav");
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					else {
+						try {
+							Herramientas.play("sonidos/asesinato2.wav");
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
 					tortuga = null;
 					tortugas.remove(i);
 					i--;
@@ -622,6 +684,12 @@ public class Juego extends InterfaceJuego {
 		entorno.escribirTexto("Gnomos muertos: " + gnomosMuertos, 250, 330);
 		entorno.escribirTexto("Tortugas asesinadas: " + tortugasAsesinadas, 250, 370);
 		entorno.escribirTexto("Nivel: " + nivel, 250, 410);
+		entorno.escribirTexto("PEP: ", 50, 250);
+		entorno.escribirTexto(pepSalvados + " SALVADAS ", 50, 300);
+		entorno.escribirTexto(pepAsesinatos + " ASESINATOS ", 50, 350);
+		entorno.escribirTexto("ROKU : ", 600, 250);
+		entorno.escribirTexto(rokuSalvados + " SALVADAS ", 600, 300);
+		entorno.escribirTexto(rokuAsesinatos + " ASESINATOS ", 600, 350);
 
 		entorno.escribirTexto("Presioná 'R' para reiniciar o 'Q' para salir", 180, 470);
 
