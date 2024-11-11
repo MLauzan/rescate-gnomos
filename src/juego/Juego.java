@@ -86,7 +86,7 @@ public class Juego extends InterfaceJuego {
 				null);
 		this.disparos = new ArrayList<>();
 		this.disparos2 = new ArrayList<>();
-		finalizar=1;
+		finalizar=3;
 
 		this.entorno.iniciar();
 		this.tiempoGeneracion = 0;
