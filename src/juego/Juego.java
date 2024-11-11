@@ -134,10 +134,12 @@ public class Juego extends InterfaceJuego {
 			entorno.escribirTexto("¡GNOMO A SALVO!", 520, 170);
 		} else if (gnomosSalvados == 5 && (tiempoJuego - tiempoUltimoSalvado) < 3) {
 			entorno.escribirTexto("¡HÉROE DE GNOMOS!", 500, 170);
-		} else if (gnomosSalvados == 10 && (tiempoJuego - tiempoUltimoSalvado) < 3) {
+		} else if (gnomosSalvados == 15 && (tiempoJuego - tiempoUltimoSalvado) < 3) {
 			entorno.escribirTexto("¡NIÑERA PROFESIONAL!", 460, 170);
-		} else if (gnomosSalvados == 20 && (tiempoJuego - tiempoUltimoSalvado) < 3) {
+		} else if (gnomosSalvados == 25 && (tiempoJuego - tiempoUltimoSalvado) < 3) {
 			entorno.escribirTexto("¡EL SALVADOR!", 540, 170);
+		}else if (gnomosSalvados == nivel*10 && (tiempoJuego - tiempoUltimoSalvado) < 3) {
+			entorno.escribirTexto("¡SUBES DE NIVEL!", 540, 170);
 		}
 
 		entorno.cambiarFont("Arial", 18, Color.white);
@@ -480,7 +482,7 @@ public class Juego extends InterfaceJuego {
 							e.printStackTrace();
 						}
 					}
-					if(gnomosSalvados==1 || gnomosSalvados==5 || gnomosSalvados==10 || gnomosSalvados==20){
+					if(gnomosSalvados==1 || gnomosSalvados==5 || gnomosSalvados==15 || gnomosSalvados==25){
 						try {
 							Herramientas.play("sonidos/logrosalva.wav");
 						} catch (Exception e) {
@@ -516,7 +518,7 @@ public class Juego extends InterfaceJuego {
 							e.printStackTrace();
 						}
 					}
-					if(gnomosSalvados==1 || gnomosSalvados==5 || gnomosSalvados==10 || gnomosSalvados==20){
+					if(gnomosSalvados==1 || gnomosSalvados==5 || gnomosSalvados==15 || gnomosSalvados==25){
 						try {
 							Herramientas.play("sonidos/logrosalva.wav");
 						} catch (Exception e) {
@@ -613,7 +615,7 @@ public class Juego extends InterfaceJuego {
 					tiempoUltimaMuerte = tiempoJuego;
 					if(tortugasAsesinadas==1 || tortugasAsesinadas==5 || tortugasAsesinadas==10 || tortugasAsesinadas==20){
 						try {
-							Herramientas.play("sonidos/logroase.wav");
+							Herramientas.play("sonidos/logro2.wav");
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -643,7 +645,7 @@ public class Juego extends InterfaceJuego {
 					tiempoUltimaMuerte = tiempoJuego;
 					if(tortugasAsesinadas==1 || tortugasAsesinadas==5 || tortugasAsesinadas==10 || tortugasAsesinadas==20){
 						try {
-							Herramientas.play("sonidos/logroase.wav");
+							Herramientas.play("sonidos/logro2.wav");
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
