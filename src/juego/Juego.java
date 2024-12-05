@@ -40,6 +40,12 @@ public class Juego extends InterfaceJuego {
 	private int rokuSalvados;
 	private int pepAsesinatos;
 	private int rokuAsesinatos;
+	private int ultimo;
+	private int balasPep;
+	private int balasRoku;
+	private double tiempoRecarga;
+	private double tiempoRecarga2;
+	
 
 	public void dibujarFondo() {
 		Image imagenFondo = Herramientas.cargarImagen("imagenes/fondo.jpg");
@@ -70,7 +76,12 @@ public class Juego extends InterfaceJuego {
 				null);
 		this.disparos = new ArrayList<>();
 		this.disparos2 = new ArrayList<>();
-		finalizar = 3;
+		finalizar = 2;
+		ultimo=finalizar-1;
+		balasPep=3;
+		balasRoku=3;
+		this.tiempoRecarga=0;
+		this.tiempoRecarga2=0;
 
 		this.entorno.iniciar();
 		this.tiempoGeneracion = 0;
@@ -90,6 +101,10 @@ public class Juego extends InterfaceJuego {
 			juegoGanado = true;
 			terminarJuego();
 		}
+		if ((nivel == ultimo) && (pep == null || roku == null) ) {
+			juegoGanado = true;
+			terminarJuego();
+		}
 
 		if (juegoTerminado) {
 			if (juegoGanado) {
@@ -100,7 +115,9 @@ public class Juego extends InterfaceJuego {
 			return;
 		}
 
-		entorno.cambiarFont("DialogInput", 26, Color.RED, 1);
+		entorno.cambiarFont("Arial", 18, Color.BLACK, 1);
+		entorno.escribirTexto("Tortugas asesinadas: " + tortugasAsesinadas, 575, 25);
+		entorno.cambiarFont("DialogInput", 26, Color.BLACK, 1);
 
 		if (tortugasAsesinadas == 1 && (tiempoJuego - tiempoUltimaMuerte) < 3) {
 			entorno.escribirTexto("¡TORTUGA A LA PARRILLA!", 240, 140);
@@ -112,6 +129,8 @@ public class Juego extends InterfaceJuego {
 			entorno.escribirTexto("¡FURIA DESATADA!", 265, 140);
 		}
 
+		entorno.cambiarFont("Arial", 18, Color.CYAN, 1);
+		entorno.escribirTexto("Gnomos salvados: " + gnomosSalvados, 10, 25);
 		entorno.cambiarFont("DialogInput", 26, Color.CYAN, 1);
 
 		if (gnomosSalvados == 1 && (tiempoJuego - tiempoUltimoSalvado) < 3) {
@@ -127,19 +146,34 @@ public class Juego extends InterfaceJuego {
 		}
 
 		entorno.cambiarFont("Arial", 18, Color.white);
-
-		entorno.escribirTexto("Gnomos salvados: " + gnomosSalvados, 10, 25);
-		entorno.escribirTexto("Gnomos muertos: " + gnomosMuertos, 630, 25);
-		entorno.escribirTexto("Tortugas asesinadas: " + tortugasAsesinadas, 600, 50);
-		entorno.escribirTexto("Nivel: " + nivel, 650, 75);
 		entorno.escribirTexto("Tiempo de juego: " + tiempoJuego + " s", 10, 50);
+		
+		Color rosa = new Color(255, 192, 203);
+		entorno.cambiarFont("Arial", 18, rosa);
+		entorno.escribirTexto("Gnomos muertos: " + gnomosMuertos, 625, 50);
+
 		if (this.pep != null) {
-			entorno.escribirTexto("Vidas Pep: " + this.pep.getVida(), 10, 75);
-			entorno.escribirTexto("Escudos Pep: " + this.escudo.getVida(), 10, 100);
+			entorno.cambiarFont("DialogInput", 26, Color.RED, 1);
+			entorno.escribirTexto("PEP:" , 10, 75);
+			entorno.escribirTexto("Vidas:" + this.pep.getVida(), 10, 100);
+			entorno.escribirTexto("Escudos:" + this.escudo.getVida(), 10, 125);
 		}
 		if (this.roku != null) {
-			entorno.escribirTexto("Vidas Roku: " + this.roku.getVida(), 10, 125);
-			entorno.escribirTexto("Escudos Roku: " + this.escudo2.getVida(), 10, 150);
+			Color verdeMusgo = new Color(85, 107, 47);
+			entorno.cambiarFont("DialogInput", 26, verdeMusgo, 1);
+			entorno.escribirTexto("ROKU:" + this.roku.getVida(), 690, 75);
+			entorno.escribirTexto("Vidas:" + this.roku.getVida(), 675, 100);
+			entorno.escribirTexto("Escudos:" + this.escudo2.getVida(), 643, 125);
+		}
+		
+		if(ultimo==nivel) {
+			entorno.cambiarFont("DialogInput", 26, Color.YELLOW, 1);
+			entorno.escribirTexto("FINAL 1 VS 1", 300, 20);
+
+		}
+		if(nivel!=ultimo) {
+			entorno.cambiarFont("DialogInput", 26, Color.YELLOW, 1);
+			entorno.escribirTexto("NIVEL:" + nivel, 350, 20);
 		}
 
 		this.casa.dibujar(entorno);
@@ -225,9 +259,19 @@ public class Juego extends InterfaceJuego {
 			}
 
 			// DISPARO PEP
-			if (entorno.sePresiono('v') || entorno.sePresionoBoton(entorno.BOTON_IZQUIERDO)) {
+			if (balasPep==0) {
+				tiempoRecarga += 1.0 / 60;
+				
+				if (tiempoRecarga >= 3) {
+					balasPep=3;
+					tiempoRecarga=0;
+				}
+			}
+			
+			if (entorno.sePresiono('v') && balasPep>0) {
 				disparos.add(new BolaFuego(this.pep.getX(), this.pep.getY() + this.pep.getAlto() / 4, 50, 30, null,
 						direcBola));
+				balasPep--;
 				try {
 					Herramientas.play("sonidos/disparo.wav");
 				} catch (Exception e) {
@@ -316,9 +360,19 @@ public class Juego extends InterfaceJuego {
 			}
 
 			// DISPARO ROKU
-			if (entorno.sePresiono('l') || entorno.sePresionoBoton(entorno.BOTON_DERECHO)) {
+			if (balasRoku==0) {
+				tiempoRecarga2 += 1.0 / 60;
+				
+				if (tiempoRecarga2 >= 3) {
+					balasRoku=3;
+					tiempoRecarga2=0;
+				}
+			}
+			
+			if (entorno.sePresiono('l') && balasRoku>0) {
 				disparos2.add(new BolaFuego(this.roku.getX(), this.roku.getY() + this.roku.getAlto() / 4, 50, 30, null,
 						direcBola2));
+				balasRoku--;
 				try {
 					Herramientas.play("sonidos/disparo.wav");
 				} catch (Exception e) {
@@ -326,6 +380,7 @@ public class Juego extends InterfaceJuego {
 				}
 			}
 			// BOLA DE FUEGO 2
+			
 			for (int i = 0; i < disparos2.size(); i++) {
 				BolaFuego bola2 = disparos2.get(i);
 				if (bola2 != null) {
@@ -347,213 +402,324 @@ public class Juego extends InterfaceJuego {
 
 		}
 
-		// GNOMO
+		if(nivel<ultimo) {
+			// GNOMO
 
-		tiempoGeneracion += 1.0 / 60;
-
-		if (tiempoGeneracion >= intervaloGeneracion) {
-			if (gnomos.size() < 4) {
+			tiempoGeneracion += 1.0 / 60;
+	
+			if (tiempoGeneracion >= intervaloGeneracion) {
+				if (gnomos.size() < 4) {
+					gnomos.add(new Gnomo(400, 60, 55, 95, 0, 0, 0, null, false));
+	
+				}
+				tiempoGeneracion = 0;
+			}
+	
+			if (gnomos.size() < 2) {
 				gnomos.add(new Gnomo(400, 60, 55, 95, 0, 0, 0, null, false));
-
 			}
-			tiempoGeneracion = 0;
-		}
-
-		if (gnomos.size() < 2) {
-			gnomos.add(new Gnomo(400, 60, 55, 95, 0, 0, 0, null, false));
-		}
-
-		for (int i = 0; i < gnomos.size(); i++) {
-			Gnomo gnomo = gnomos.get(i);
-			if (gnomo != null) {
-				gnomo.dibujar(entorno);
-
-				// MOVILIDAD GNOMO
-				if (gnomo.gnomoSobreIsla(this.islas.getIslas())) {
-					if (!gnomo.estaAterrizado()) {
-						gnomo.elegirDireccion();
-						gnomo.setAterrizado(true);
-					}
-					if (gnomo.isMovimientoDerecha()) {
-						gnomo.moverDerecha();
+	
+			for (int i = 0; i < gnomos.size(); i++) {
+				Gnomo gnomo = gnomos.get(i);
+				if (gnomo != null) {
+					gnomo.dibujar(entorno);
+	
+					// MOVILIDAD GNOMO
+					if (gnomo.gnomoSobreIsla(this.islas.getIslas())) {
+						if (!gnomo.estaAterrizado()) {
+							gnomo.elegirDireccion();
+							gnomo.setAterrizado(true);
+						}
+						if (gnomo.isMovimientoDerecha()) {
+							gnomo.moverDerecha();
+						} else {
+							gnomo.moverIzquierda();
+						}
 					} else {
-						gnomo.moverIzquierda();
-					}
-				} else {
-					gnomo.moverAbajo();
-					gnomo.resetearAterrizado();
-
-					if (!gnomo.dentroDelEntorno(entorno)) {
-						gnomo = null;
-						gnomos.remove(i);
-						i--;
-					}
-				}
-			}
-		}
-
-		// TORTUGA
-
-		tiempoGeneracion += 1 / 60.0;
-
-		if (tiempoGeneracion >= intervaloGeneracion) {
-			if (tortugas.size() < nivel * 2 + 2) {
-				int x = rand.nextInt(entorno.getWidth());
-
-				tortugas.add(new Tortuga(x, 0, 35, 50, 0, 0, 0, null, false, true, 2, 2));
-			}
-
-			tiempoGeneracion = 0;
-		}
-
-		for (int i = 0; i < tortugas.size(); i++) {
-			Tortuga tortuga = tortugas.get(i);
-
-			if (tortuga != null) {
-				tortuga.dibujar(entorno);
-
-				// MOVILIDAD TORTUGA
-				if (!tortuga.estaAterrizado()) {
-					tortuga.moverAbajo();
-					tortuga.resetearAterrizado();
-				}
-				if (tortuga.tortugaSobreIsla(this.islas.getIslas())
-						&& !tortuga.tortugaSobreCasa(casa) /* && !tortuga.islaOcupada(islas, tortugas) */) {
-					tortuga.setAterrizado(true);
-					if (tortuga.isMovimientiIzquierda()) {
-						tortuga.moverIzquierda();
-					} else {
-						tortuga.moverDerecha();
-					}
-					if (!tortuga.tortugaSobreIsla(this.islas.getIslas())) { // si se va de limites de isla vuelve a
-																			// entrar con direccion
-						// opuesta
-						tortuga.moverDerecha();
-						tortuga.setMovimientoIzquierda(false);
-						if (!tortuga.tortugaSobreIsla(this.islas.getIslas())) {
-							tortuga.moverIzquierda();
-							tortuga.moverIzquierda();
-							tortuga.setMovimientoIzquierda(true);
+						gnomo.moverAbajo();
+						gnomo.resetearAterrizado();
+	
+						if (!gnomo.dentroDelEntorno(entorno)) {
+							gnomo = null;
+							gnomos.remove(i);
+							i--;
 						}
 					}
-
-					if (!tortuga.dentroDelEntorno(entorno)) {
+				}
+			}
+	
+			// TORTUGA
+	
+			tiempoGeneracion += 1 / 60.0;
+	
+			if (tiempoGeneracion >= intervaloGeneracion) {
+				if (tortugas.size() < nivel * 2 + 2) {
+					int x = rand.nextInt(entorno.getWidth());
+	
+					tortugas.add(new Tortuga(x, 0, 35, 50, 0, 0, 0, null, false, true, 2, 2));
+				}
+	
+				tiempoGeneracion = 0;
+			}
+	
+			for (int i = 0; i < tortugas.size(); i++) {
+				Tortuga tortuga = tortugas.get(i);
+	
+				if (tortuga != null) {
+					tortuga.dibujar(entorno);
+	
+					// MOVILIDAD TORTUGA
+					if (!tortuga.estaAterrizado()) {
+						tortuga.moverAbajo();
+						tortuga.resetearAterrizado();
+					}
+					if (tortuga.tortugaSobreIsla(this.islas.getIslas())
+							&& !tortuga.tortugaSobreCasa(casa) /* && !tortuga.islaOcupada(islas, tortugas) */) {
+						tortuga.setAterrizado(true);
+						if (tortuga.isMovimientiIzquierda()) {
+							tortuga.moverIzquierda();
+						} else {
+							tortuga.moverDerecha();
+						}
+						if (!tortuga.tortugaSobreIsla(this.islas.getIslas())) { // si se va de limites de isla vuelve a
+																				// entrar con direccion
+							// opuesta
+							tortuga.moverDerecha();
+							tortuga.setMovimientoIzquierda(false);
+							if (!tortuga.tortugaSobreIsla(this.islas.getIslas())) {
+								tortuga.moverIzquierda();
+								tortuga.moverIzquierda();
+								tortuga.setMovimientoIzquierda(true);
+							}
+						}
+	
+						if (!tortuga.dentroDelEntorno(entorno)) {
+							tortuga = null;
+							tortugas.remove(i);
+							i--;
+						}
+					}
+	
+				}
+	
+			}
+		}
+		
+		if(nivel<ultimo) {
+	//		COLISION 1 PEP
+			for (int j = 0; j < gnomos.size(); j++) {	
+				Gnomo gnomo = gnomos.get(j);
+				for (int i = 0; i < tortugas.size(); i++) {
+					Tortuga tortuga = tortugas.get(i);
+	
+					// rescate pep
+					if (this.pep != null && this.pep.getY() > 300 && gnomo != null
+							&& hayColision(this.pep.getX(), this.pep.getY(), this.pep.getAncho(), this.pep.getAlto(),
+									gnomo.getX(), gnomo.getY(), gnomo.getAncho(), gnomo.getAlto())) {
+						tiempoUltimoSalvado = tiempoJuego;
+						pepSalvados++;
+						gnomosSalvados++;
+						if (gnomosSalvados == finalizar * 10) {
+							try {
+								Herramientas.play("sonidos/ganar.wav");
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+						if (gnomosSalvados == 1 || gnomosSalvados == 5 || gnomosSalvados == 15 || gnomosSalvados == 25) {
+							try {
+								Herramientas.play("sonidos/logrosalva.wav");
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						} else {
+							try {
+								Herramientas.play("sonidos/salvado.wav");
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+						gnomo = null;
+						gnomos.remove(j);
+						j--;
+						if (this.escudo.getVida() < 3) {
+							this.escudo.setVida(this.escudo.getVida() + 1);
+						}
+					}
+	
+					// rescate roku
+					if (this.roku != null && this.roku.getY() > 300 && gnomo != null
+							&& hayColision(this.roku.getX(), this.roku.getY(), this.roku.getAncho(), this.roku.getAlto(),
+									gnomo.getX(), gnomo.getY(), gnomo.getAncho(), gnomo.getAlto())) {
+						tiempoUltimoSalvado = tiempoJuego;
+						rokuSalvados++;
+						gnomosSalvados++;
+						if (gnomosSalvados == finalizar * 10) {
+							try {
+								Herramientas.play("sonidos/ganar.wav");
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+						if (gnomosSalvados == 1 || gnomosSalvados == 5 || gnomosSalvados == 15 || gnomosSalvados == 25) {
+							try {
+								Herramientas.play("sonidos/logrosalva.wav");
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						} else {
+							try {
+								Herramientas.play("sonidos/salvado.wav");
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+						gnomo = null;
+						gnomos.remove(j);
+						j--;
+						if (this.escudo2.getVida() < 3) {
+							this.escudo2.setVida(this.escudo2.getVida() + 1);
+						}
+					}
+	
+					// muerte pep
+					if (this.pep != null && tortuga != null
+							&& !((entorno.estaPresionada('s') || entorno.estaPresionada(entorno.TECLA_ABAJO))
+									&& this.escudo.getVida() > 0)
+							&& hayColision(this.pep.getX(), this.pep.getY(), this.pep.getAncho(), this.pep.getAlto(),
+									tortuga.getX(), tortuga.getY(), tortuga.getAncho(), tortuga.getAlto())) {
+						try {
+							Herramientas.play("sonidos/muerte.wav");
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						if (this.pep.getVida() > 1) {
+							this.pep.setVida(this.pep.getVida() - 1);
+							this.pep.setX(400);
+							this.pep.setY(1);
+						} else {
+							this.pep = null;
+							try {
+								Herramientas.play("sonidos/perder2.wav");
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					}
+	
+					// muerte roku
+					if (this.roku != null && tortuga != null
+							&& !((entorno.estaPresionada('s') || entorno.estaPresionada(entorno.TECLA_ABAJO))
+									&& this.escudo2.getVida() > 0)
+							&& hayColision(this.roku.getX(), this.roku.getY(), this.roku.getAncho(), this.roku.getAlto(),
+									tortuga.getX(), tortuga.getY(), tortuga.getAncho(), tortuga.getAlto())) {
+						try {
+							Herramientas.play("sonidos/muerte.wav");
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						if (this.roku.getVida() > 1) {
+							this.roku.setVida(this.roku.getVida() - 1);
+							this.roku.setX(400);
+							this.roku.setY(1);
+						} else {
+							this.roku = null;
+							try {
+								Herramientas.play("sonidos/perder.wav");
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					}
+	
+					// muerte gnomo
+					if (gnomo != null && tortuga != null && hayColision(gnomo.getX(), gnomo.getY(), gnomo.getAncho(),
+							gnomo.getAlto(), tortuga.getX(), tortuga.getY(), tortuga.getAncho(), tortuga.getAlto())) {
+						gnomosMuertos++;
+						gnomo = null;
+						gnomos.remove(j);
+						j--;
+					}
+	
+				}
+			}
+	
+			// COLISION 2
+			for (int i = 0; i < tortugas.size(); i++) {
+				Tortuga tortuga = tortugas.get(i);
+				for (int w = 0; w < disparos.size(); w++) {
+					BolaFuego bola = disparos.get(w);
+					// muerte tortuga
+					if (bola != null && tortuga != null && hayColision(bola.getX(), bola.getY(), bola.getAncho(),
+							bola.getAlto(), tortuga.getX(), tortuga.getY(), tortuga.getAncho(), tortuga.getAlto())) {
+						pepAsesinatos++;
+						tortugasAsesinadas++;
+						tiempoUltimaMuerte = tiempoJuego;
+						if (tortugasAsesinadas == 1 || tortugasAsesinadas == 5 || tortugasAsesinadas == 10
+								|| tortugasAsesinadas == 20) {
+							try {
+								Herramientas.play("sonidos/logro2.wav");
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						} else {
+							try {
+								Herramientas.play("sonidos/asesinato2.wav");
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
 						tortuga = null;
 						tortugas.remove(i);
 						i--;
+						bola = null;
+						disparos.remove(w);
+						w--;
 					}
 				}
-
-			}
-
+				for (int j = 0; j < disparos2.size(); j++) {
+					BolaFuego bola2 = disparos2.get(j);
+					// muerte tortuga
+					if (bola2 != null && tortuga != null && hayColision(bola2.getX(), bola2.getY(), bola2.getAncho(),
+							bola2.getAlto(), tortuga.getX(), tortuga.getY(), tortuga.getAncho(), tortuga.getAlto())) {
+						rokuAsesinatos++;
+						tortugasAsesinadas++;
+						tiempoUltimaMuerte = tiempoJuego;
+						if (tortugasAsesinadas == 1 || tortugasAsesinadas == 5 || tortugasAsesinadas == 10
+								|| tortugasAsesinadas == 20) {
+							try {
+								Herramientas.play("sonidos/logro2.wav");
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						} else {
+							try {
+								Herramientas.play("sonidos/asesinato2.wav");
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+						tortuga = null;
+						tortugas.remove(i);
+						i--;
+						bola2 = null;
+						disparos2.remove(j);
+						j--;
+					}
+				}
+			}			
 		}
-//		COLISION 1 PEP
-		for (int j = 0; j < gnomos.size(); j++) {	
-			Gnomo gnomo = gnomos.get(j);
-			for (int i = 0; i < tortugas.size(); i++) {
-				Tortuga tortuga = tortugas.get(i);
-
-				// rescate pep
-				if (this.pep != null && this.pep.getY() > 300 && gnomo != null
-						&& hayColision(this.pep.getX(), this.pep.getY(), this.pep.getAncho(), this.pep.getAlto(),
-								gnomo.getX(), gnomo.getY(), gnomo.getAncho(), gnomo.getAlto())) {
-					tiempoUltimoSalvado = tiempoJuego;
-					pepSalvados++;
-					gnomosSalvados++;
-					if (gnomosSalvados == finalizar * 10) {
-						try {
-							Herramientas.play("sonidos/ganar.wav");
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					if (gnomosSalvados == 1 || gnomosSalvados == 5 || gnomosSalvados == 15 || gnomosSalvados == 25) {
-						try {
-							Herramientas.play("sonidos/logrosalva.wav");
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					} else {
-						try {
-							Herramientas.play("sonidos/salvado.wav");
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					gnomo = null;
-					gnomos.remove(j);
-					j--;
-					if (this.escudo.getVida() < 3) {
-						this.escudo.setVida(this.escudo.getVida() + 1);
-					}
-				}
-
-				// rescate roku
-				if (this.roku != null && this.roku.getY() > 300 && gnomo != null
-						&& hayColision(this.roku.getX(), this.roku.getY(), this.roku.getAncho(), this.roku.getAlto(),
-								gnomo.getX(), gnomo.getY(), gnomo.getAncho(), gnomo.getAlto())) {
-					tiempoUltimoSalvado = tiempoJuego;
-					rokuSalvados++;
-					gnomosSalvados++;
-					if (gnomosSalvados == finalizar * 10) {
-						try {
-							Herramientas.play("sonidos/ganar.wav");
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					if (gnomosSalvados == 1 || gnomosSalvados == 5 || gnomosSalvados == 15 || gnomosSalvados == 25) {
-						try {
-							Herramientas.play("sonidos/logrosalva.wav");
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					} else {
-						try {
-							Herramientas.play("sonidos/salvado.wav");
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					gnomo = null;
-					gnomos.remove(j);
-					j--;
-					if (this.escudo2.getVida() < 3) {
-						this.escudo2.setVida(this.escudo2.getVida() + 1);
-					}
-				}
-
-				// muerte pep
-				if (this.pep != null && tortuga != null
-						&& !((entorno.estaPresionada('s') || entorno.estaPresionada(entorno.TECLA_ABAJO))
-								&& this.escudo.getVida() > 0)
-						&& hayColision(this.pep.getX(), this.pep.getY(), this.pep.getAncho(), this.pep.getAlto(),
-								tortuga.getX(), tortuga.getY(), tortuga.getAncho(), tortuga.getAlto())) {
-					try {
-						Herramientas.play("sonidos/muerte.wav");
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					if (this.pep.getVida() > 1) {
-						this.pep.setVida(this.pep.getVida() - 1);
-						this.pep.setX(400);
-						this.pep.setY(1);
-					} else {
-						this.pep = null;
-						try {
-							Herramientas.play("sonidos/perder2.wav");
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				}
-
-				// muerte roku
-				if (this.roku != null && tortuga != null
-						&& !((entorno.estaPresionada('s') || entorno.estaPresionada(entorno.TECLA_ABAJO))
-								&& this.escudo2.getVida() > 0)
-						&& hayColision(this.roku.getX(), this.roku.getY(), this.roku.getAncho(), this.roku.getAlto(),
-								tortuga.getX(), tortuga.getY(), tortuga.getAncho(), tortuga.getAlto())) {
+		if(nivel==ultimo) {
+			// BATALLA FINALLLL
+			for (int w = 0; w < disparos.size(); w++) {
+				BolaFuego bola = disparos.get(w);
+				//pep mata a roku
+				if (bola != null && this.roku != null &&    !(entorno.estaPresionada(entorno.TECLA_ABAJO)
+						&& this.escudo2.getVida() > 0) && hayColision(bola.getX(), bola.getY(), bola.getAncho(),
+						bola.getAlto(), this.roku.getX(), this.roku.getY(), this.roku.getAncho(), this.roku.getAlto())) {
+					bola = null;
+					disparos.remove(w);
+					w--;
 					try {
 						Herramientas.play("sonidos/muerte.wav");
 					} catch (Exception e) {
@@ -572,84 +738,57 @@ public class Juego extends InterfaceJuego {
 						}
 					}
 				}
-
-				// muerte gnomo
-				if (gnomo != null && tortuga != null && hayColision(gnomo.getX(), gnomo.getY(), gnomo.getAncho(),
-						gnomo.getAlto(), tortuga.getX(), tortuga.getY(), tortuga.getAncho(), tortuga.getAlto())) {
-					gnomosMuertos++;
-					gnomo = null;
-					gnomos.remove(j);
-					j--;
-				}
-
-			}
-		}
-
-		// COLISION 2
-		for (int i = 0; i < tortugas.size(); i++) {
-			Tortuga tortuga = tortugas.get(i);
-			for (int w = 0; w < disparos.size(); w++) {
-				BolaFuego bola = disparos.get(w);
-				// muerte tortuga
-				if (bola != null && tortuga != null && hayColision(bola.getX(), bola.getY(), bola.getAncho(),
-						bola.getAlto(), tortuga.getX(), tortuga.getY(), tortuga.getAncho(), tortuga.getAlto())) {
-					pepAsesinatos++;
-					tortugasAsesinadas++;
-					tiempoUltimaMuerte = tiempoJuego;
-					if (tortugasAsesinadas == 1 || tortugasAsesinadas == 5 || tortugasAsesinadas == 10
-							|| tortugasAsesinadas == 20) {
-						try {
-							Herramientas.play("sonidos/logro2.wav");
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					} else {
-						try {
-							Herramientas.play("sonidos/asesinato2.wav");
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					tortuga = null;
-					tortugas.remove(i);
-					i--;
-					bola = null;
-					disparos.remove(w);
-					w--;
-				}
 			}
 			for (int j = 0; j < disparos2.size(); j++) {
 				BolaFuego bola2 = disparos2.get(j);
-				// muerte tortuga
-				if (bola2 != null && tortuga != null && hayColision(bola2.getX(), bola2.getY(), bola2.getAncho(),
-						bola2.getAlto(), tortuga.getX(), tortuga.getY(), tortuga.getAncho(), tortuga.getAlto())) {
-					rokuAsesinatos++;
-					tortugasAsesinadas++;
-					tiempoUltimaMuerte = tiempoJuego;
-					if (tortugasAsesinadas == 1 || tortugasAsesinadas == 5 || tortugasAsesinadas == 10
-							|| tortugasAsesinadas == 20) {
-						try {
-							Herramientas.play("sonidos/logro2.wav");
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+				//roku mata a pep
+				if (bola2 != null && this.pep != null &&  !(entorno.estaPresionada('s')
+						&& this.escudo.getVida() > 0) && hayColision(bola2.getX(), bola2.getY(), bola2.getAncho(),
+						bola2.getAlto(), this.pep.getX(), this.pep.getY(), this.pep.getAncho(), this.pep.getAlto())) {
+					bola2 = null;
+					disparos2.remove(j);
+					j--;
+					try {
+						Herramientas.play("sonidos/muerte.wav");
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					if (this.pep.getVida() > 1) {
+						this.pep.setVida(this.pep.getVida() - 1);
+						this.pep.setX(400);
+						this.pep.setY(1);
 					} else {
+						this.pep = null;
 						try {
-							Herramientas.play("sonidos/asesinato2.wav");
+							Herramientas.play("sonidos/perder2.wav");
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
 					}
-					tortuga = null;
-					tortugas.remove(i);
-					i--;
-					bola2 = null;
-					disparos2.remove(j);
-					j--;
 				}
 			}
+
+			for (int w = 0; w < disparos.size(); w++) {
+				BolaFuego bola = disparos.get(w);
+					for (int j = 0; j < disparos2.size(); j++) {
+					BolaFuego bola2 = disparos2.get(j);
+					//choque de bolas de fuego
+					if (bola2 != null && bola != null && hayColision(bola2.getX(), bola2.getY(), bola2.getAncho(),
+							bola2.getAlto(), bola.getX(), bola.getY(), bola.getAncho(), bola.getAlto())) {
+						bola2 = null;
+						bola = null;
+						disparos2.remove(j);
+						disparos.remove(w);
+						j--;
+						w--;
+					}
+				}
+			}
+					
+			
 		}
 	}
+
 
 	public void dibujarMenuFinal(String mensajeFinal) {
 
