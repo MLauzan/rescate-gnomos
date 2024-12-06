@@ -60,6 +60,11 @@ public class Juego extends InterfaceJuego {
 	public void terminarJuego() {
 		juegoTerminado = true;
 	}
+	public void dibujarBalas(double x,double y) {
+		Image imagenBalas = Herramientas.cargarImagen("imagenes/bolaFuego.jpg");
+		entorno.dibujarImagen(imagenBalas, x, y, Math.toRadians(0), 0.02);
+	}
+	
 
 	Juego() {
 
@@ -154,14 +159,14 @@ public class Juego extends InterfaceJuego {
 
 		if (this.pep != null) {
 			entorno.cambiarFont("DialogInput", 26, Color.RED, 1);
-			entorno.escribirTexto("PEP:" , 10, 75);
+			entorno.escribirTexto("PEP" , 10, 75);
 			entorno.escribirTexto("Vidas:" + this.pep.getVida(), 10, 100);
 			entorno.escribirTexto("Escudos:" + this.escudo.getVida(), 10, 125);
 		}
 		if (this.roku != null) {
 			Color verdeMusgo = new Color(85, 107, 47);
 			entorno.cambiarFont("DialogInput", 26, verdeMusgo, 1);
-			entorno.escribirTexto("ROKU:" + this.roku.getVida(), 690, 75);
+			entorno.escribirTexto("ROKU" , 690, 75);
 			entorno.escribirTexto("Vidas:" + this.roku.getVida(), 675, 100);
 			entorno.escribirTexto("Escudos:" + this.escudo2.getVida(), 643, 125);
 		}
@@ -265,6 +270,17 @@ public class Juego extends InterfaceJuego {
 				if (tiempoRecarga >= 3) {
 					balasPep=3;
 					tiempoRecarga=0;
+					try {
+						Herramientas.play("sonidos/recarga.wav");
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			
+			if(balasPep!=0) {
+				for(int i=1;i<=balasPep;i++) {
+					dibujarBalas(i*30+20,150);
 				}
 			}
 			
@@ -363,9 +379,22 @@ public class Juego extends InterfaceJuego {
 			if (balasRoku==0) {
 				tiempoRecarga2 += 1.0 / 60;
 				
+				
 				if (tiempoRecarga2 >= 3) {
 					balasRoku=3;
 					tiempoRecarga2=0;
+					try {
+						Herramientas.play("sonidos/recarga.wav");
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			
+			
+			if(balasRoku!=0) {
+				for(int i=1;i<=balasRoku;i++) {
+					dibujarBalas(i*30+650,150);
 				}
 			}
 			
