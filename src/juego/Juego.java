@@ -45,6 +45,10 @@ public class Juego extends InterfaceJuego {
 	private int balasRoku;
 	private double tiempoRecarga;
 	private double tiempoRecarga2;
+	private double tiempoEscudo;
+	private double tiempoEscudo2;
+	private boolean tieneEscudo;
+	private boolean tieneEscudo2;
 	
 
 	public void dibujarFondo() {
@@ -87,6 +91,10 @@ public class Juego extends InterfaceJuego {
 		balasRoku=3;
 		this.tiempoRecarga=0;
 		this.tiempoRecarga2=0;
+		tiempoEscudo=0;
+		tiempoEscudo2=0;
+		tieneEscudo=false;
+		tieneEscudo2=false;
 
 		this.entorno.iniciar();
 		this.tiempoGeneracion = 0;
@@ -214,12 +222,9 @@ public class Juego extends InterfaceJuego {
 			this.escudo.setY(this.pep.getY());
 			this.escudo.setAlto(this.pep.getAlto());
 			this.escudo.setAncho(this.pep.getAncho());
-			if (entorno.estaPresionada('s') && this.escudo.getVida() > 0) {
+			if (tieneEscudo) {
 				this.escudo.dibujar(entorno);
-			}
-			if (entorno.seLevanto('s') && this.escudo.getVida() > 0) {
-				this.escudo.setVida(this.escudo.getVida() - 1);
-
+				
 			}
 
 			// MOVILIDAD PEP
@@ -260,6 +265,22 @@ public class Juego extends InterfaceJuego {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+				}
+			}
+			
+			//ESCUDO PEP
+			if(entorno.sePresiono('s')
+					&& this.escudo.getVida() > 0 && !tieneEscudo) {
+				this.escudo.setVida(this.escudo.getVida() - 1);
+				tieneEscudo=true;
+			}
+			
+			if(tieneEscudo) {
+				tiempoEscudo += 1.0 / 60;
+				
+				if(tiempoEscudo >= 10) {
+					tieneEscudo=false;
+					tiempoEscudo=0;
 				}
 			}
 
@@ -326,12 +347,9 @@ public class Juego extends InterfaceJuego {
 			this.escudo2.setY(this.roku.getY());
 			this.escudo2.setAlto(this.roku.getAlto());
 			this.escudo2.setAncho(this.roku.getAncho());
-			if (entorno.estaPresionada(entorno.TECLA_ABAJO) && this.escudo2.getVida() > 0) {
+			if (tieneEscudo2) {
 				this.escudo2.dibujar(entorno);
-			}
-			if (entorno.seLevanto(entorno.TECLA_ABAJO) && this.escudo2.getVida() > 0) {
-				this.escudo2.setVida(this.escudo2.getVida() - 1);
-
+				
 			}
 
 			// MOVILIDAD ROKU
@@ -372,6 +390,22 @@ public class Juego extends InterfaceJuego {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
+				}
+			}
+			
+			//ESCUDO ROKU
+			if(entorno.sePresiono(entorno.TECLA_ABAJO)
+						&& this.escudo2.getVida() > 0 && !tieneEscudo2) {
+				this.escudo2.setVida(this.escudo2.getVida() - 1);
+				tieneEscudo2=true;
+			}
+			
+			if(tieneEscudo2) {
+				tiempoEscudo2 += 1.0 / 60;
+
+				if(tiempoEscudo2 >= 10) {
+					tieneEscudo2=false;
+					tiempoEscudo2=0;
 				}
 			}
 
@@ -612,9 +646,7 @@ public class Juego extends InterfaceJuego {
 					}
 	
 					// muerte pep
-					if (this.pep != null && tortuga != null
-							&& !((entorno.estaPresionada('s') || entorno.estaPresionada(entorno.TECLA_ABAJO))
-									&& this.escudo.getVida() > 0)
+					if (this.pep != null && tortuga != null	&& !tieneEscudo
 							&& hayColision(this.pep.getX(), this.pep.getY(), this.pep.getAncho(), this.pep.getAlto(),
 									tortuga.getX(), tortuga.getY(), tortuga.getAncho(), tortuga.getAlto())) {
 						try {
@@ -637,9 +669,7 @@ public class Juego extends InterfaceJuego {
 					}
 	
 					// muerte roku
-					if (this.roku != null && tortuga != null
-							&& !((entorno.estaPresionada('s') || entorno.estaPresionada(entorno.TECLA_ABAJO))
-									&& this.escudo2.getVida() > 0)
+					if (this.roku != null && tortuga != null	&& !tieneEscudo2
 							&& hayColision(this.roku.getX(), this.roku.getY(), this.roku.getAncho(), this.roku.getAlto(),
 									tortuga.getX(), tortuga.getY(), tortuga.getAncho(), tortuga.getAlto())) {
 						try {
@@ -743,8 +773,7 @@ public class Juego extends InterfaceJuego {
 			for (int w = 0; w < disparos.size(); w++) {
 				BolaFuego bola = disparos.get(w);
 				//pep mata a roku
-				if (bola != null && this.roku != null &&    !(entorno.estaPresionada(entorno.TECLA_ABAJO)
-						&& this.escudo2.getVida() > 0) && hayColision(bola.getX(), bola.getY(), bola.getAncho(),
+				if (bola != null && this.roku != null &&    !tieneEscudo2 && hayColision(bola.getX(), bola.getY(), bola.getAncho(),
 						bola.getAlto(), this.roku.getX(), this.roku.getY(), this.roku.getAncho(), this.roku.getAlto())) {
 					bola = null;
 					disparos.remove(w);
@@ -771,8 +800,7 @@ public class Juego extends InterfaceJuego {
 			for (int j = 0; j < disparos2.size(); j++) {
 				BolaFuego bola2 = disparos2.get(j);
 				//roku mata a pep
-				if (bola2 != null && this.pep != null &&  !(entorno.estaPresionada('s')
-						&& this.escudo.getVida() > 0) && hayColision(bola2.getX(), bola2.getY(), bola2.getAncho(),
+				if (bola2 != null && this.pep != null &&  !tieneEscudo && hayColision(bola2.getX(), bola2.getY(), bola2.getAncho(),
 						bola2.getAlto(), this.pep.getX(), this.pep.getY(), this.pep.getAncho(), this.pep.getAlto())) {
 					bola2 = null;
 					disparos2.remove(j);
